@@ -49,8 +49,8 @@ private:
             case LogLevel::INFO: return "INFO";
             case LogLevel::WARNING: return "WARNING";
             case LogLevel::ERROR: return "ERROR";
-            default: return "UNKNOWN";
         }
+        return "UNKNOWN"; // Should never reach here
     }
 };
 

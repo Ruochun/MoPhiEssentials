@@ -14,11 +14,12 @@ namespace Utils {
  */
 class Timer {
 public:
-    Timer() : running_(false) {}
+    Timer() : running_(false), started_(false) {}
     
     void start() {
         start_time_ = std::chrono::high_resolution_clock::now();
         running_ = true;
+        started_ = true;
     }
     
     void stop() {
@@ -27,6 +28,9 @@ public:
     }
     
     double elapsed() const {
+        if (!started_) {
+            return 0.0;
+        }
         auto end = running_ ? std::chrono::high_resolution_clock::now() : end_time_;
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start_time_);
         return duration.count() / 1e6; // Return seconds
@@ -36,6 +40,7 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
     std::chrono::time_point<std::chrono::high_resolution_clock> end_time_;
     bool running_;
+    bool started_;
 };
 
 } // namespace Utils

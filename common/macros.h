@@ -18,6 +18,7 @@
 #define MOPHI_UNUSED(x) (void)(x)
 
 // Version information
+// Note: These must be kept in sync with CMakeLists.txt
 #define MOPHI_VERSION_MAJOR 0
 #define MOPHI_VERSION_MINOR 1
 #define MOPHI_VERSION_PATCH 0
