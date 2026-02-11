@@ -5,13 +5,6 @@
 
 message(STATUS "==== Configuring Core Components ====")
 
-set(core_message "[moCore]")
-message(STATUS "${core_message} Generating API version header...")
-configure_file(
-    ApiVersion.h.in ApiVersion.h
-    @ONLY
-)
-
 add_library(moCore OBJECT)
 
 target_include_directories(
@@ -26,7 +19,7 @@ target_link_libraries(
 )
 
 set(core_headers
-    ${CMAKE_BINARY_DIR}/src/core/ApiVersion.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/ApiVersion.h
     ${CMAKE_CURRENT_SOURCE_DIR}/BaseClasses.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CudaAllocator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ManagedMemory.hpp
@@ -63,12 +56,4 @@ install(
         FILES_MATCHING 
             PATTERN "*.h"
             PATTERN "*.hpp"
-)
-
-# Install Generated Headers 
-install(
-    FILES 
-        "${CMAKE_BINARY_DIR}/src/core/ApiVersion.h"
-    DESTINATION
-        ${CMAKE_INSTALL_INCLUDEDIR}/core
 )

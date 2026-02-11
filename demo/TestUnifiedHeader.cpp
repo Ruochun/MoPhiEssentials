@@ -43,12 +43,6 @@ int main() {
     std::cout << "   Elapsed time: " << timer.GetTimeSeconds() << " seconds\n";
     std::cout << "   ✓ Timer works!\n\n";
 
-    // Test 4: API Version
-    std::cout << "4. Testing API Version...\n";
-    std::cout << "   MoPhiEssentials version: " << MOPHI_ESSENTIALS_VERSION_MAJOR << "."
-              << MOPHI_ESSENTIALS_VERSION_MINOR << "\n";
-    std::cout << "   ✓ Version macros work!\n\n";
-
     std::cout << "=== All unified header tests passed! ===\n\n";
     std::cout << "Success! The MoPhiEssentials.h header provides easy access to:\n";
     std::cout << "  - Core math (Real3)\n";
