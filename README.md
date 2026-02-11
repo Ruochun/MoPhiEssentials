@@ -139,10 +139,48 @@ target_link_libraries(your_target PUBLIC mophi_essentials)
 
 ## Example Usage
 
+### Quick Start with Unified Headers
+
+**For CPU-only code (.cpp files):**
+
+```cpp
+#include <MoPhiEssentials.h>
+
+int main() {
+    // CPU-side MoPhiEssentials features
+    mophi::Real3f vec(1.0f, 2.0f, 3.0f);
+    mophi::DeviceArray<float> arr(1000);
+    mophi::GpuManager gpuMgr;
+    mophi::Logger::GetLogger().SetVerbosity(mophi::INFO);
+    // ...
+}
+```
+
+**For CUDA code (.cu files) that needs GPU kernels:**
+
+```cu
+#include <MoPhiEssentials.h>      // CPU-side functionality
+#include <MoPhiEssentialsGPU.cuh> // GPU-side kernels and device code
+
+__global__ void myKernel() {
+    // Use GPU utilities like kernel helpers, CUB wrappers, etc.
+}
+
+int main() {
+    // Use both CPU and GPU functionality
+    myKernel<<<1, 1>>>();
+    // ...
+}
+```
+
+> **Note:** `MoPhiEssentialsGPU.cuh` contains headers that require nvcc (NVIDIA CUDA Compiler). 
+> Only include it in .cu files. For regular C++ compilation, use `MoPhiEssentials.h` only.
+
 ### Using Real3 Vectors
 
 ```cpp
-#include <core/Real3.hpp>
+#include <MoPhiEssentials.h>
+// Or individually: #include <core/Real3.hpp>
 
 mophi::Real3f a(1.0f, 2.0f, 3.0f);
 mophi::Real3f b(4.0f, 5.0f, 6.0f);
@@ -157,7 +195,8 @@ float len = a.Length();
 ### Using Device Arrays
 
 ```cpp
-#include <core/DataClasses.hpp>
+#include <MoPhiEssentials.h>
+// Or individually: #include <core/DataClasses.hpp>
 
 mophi::DeviceArray<float> gpu_array(1000);
 gpu_array.resize(2000);
@@ -167,7 +206,8 @@ gpu_array.SetVal(3.14f, 5);  // Set value at index 5
 ### Using Dual Arrays (CPU-GPU)
 
 ```cpp
-#include <core/DataMigrationHelper.hpp>
+#include <MoPhiEssentials.h>
+// Or individually: #include <core/DataMigrationHelper.hpp>
 
 mophi::DualArray<float> dual_array(1000, 1.0f);
 
@@ -186,7 +226,8 @@ dual_array.ToHost();
 ### Using GPU Manager
 
 ```cpp
-#include <core/GpuManager.h>
+#include <MoPhiEssentials.h>
+// Or individually: #include <core/GpuManager.h>
 
 mophi::GpuManager gpuMgr(4, {0, 1});  // 4 streams across GPUs 0 and 1
 
@@ -202,6 +243,8 @@ The `demo/` directory contains example programs:
 - `HelloWorld.cpp` - Basic timer usage
 - `TestMsg.cpp` - Logger demonstration
 - `TestReal3.cu` - Vector operations on CPU and GPU
+- `TestUnifiedHeader.cpp` - Demonstrates using the unified `MoPhiEssentials.h` header (CPU-only)
+- `TestUnifiedGPUHeader.cu` - Demonstrates using both `MoPhiEssentials.h` and `MoPhiEssentialsGPU.cuh` together
 - `TestDualArray.cpp` - CPU-GPU data synchronization
 - `TestContainers.cpp` - Device array pool management
 
@@ -210,6 +253,8 @@ Build and run demos:
 cd build/bin
 ./TestReal3
 ./TestMsg
+./TestUnifiedHeader     # Shows usage of MoPhiEssentials.h (CPU-side)
+./TestUnifiedGPUHeader  # Shows usage of both CPU and GPU unified headers
 ```
 
 ## API Documentation

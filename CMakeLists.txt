@@ -130,6 +130,17 @@ set_target_properties(mophi_essentials
 )
 
 # ---------------------------------------------------------------------------- #
+# Install unified include headers
+# ---------------------------------------------------------------------------- #
+install(
+    FILES 
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/MoPhiEssentials.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/MoPhiEssentialsGPU.cuh"
+    DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}
+)
+
+# ---------------------------------------------------------------------------- #
 # Build embedded demos
 # ---------------------------------------------------------------------------- #
 add_subdirectory(demo)
