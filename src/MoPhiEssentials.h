@@ -4,14 +4,14 @@
 /**
  * @file MoPhiEssentials.h
  * @brief One-stop include header for all MoPhiEssentials public API
- * 
+ *
  * This header provides convenient access to all public classes, functions,
  * and utilities in the MoPhiEssentials library. Simply include this single
  * header to use MoPhiEssentials in your project.
- * 
+ *
  * @code{.cpp}
  * #include <MoPhiEssentials.h>
- * 
+ *
  * int main() {
  *     mophi::Real3f vec(1.0f, 2.0f, 3.0f);
  *     mophi::DeviceArray<float> arr(1000);
@@ -102,4 +102,4 @@
 #include <utils/Csv.hpp>
 #include <utils/MeshIO.hpp>
 
-#endif // MOPHI_ESSENTIALS_H
+#endif  // MOPHI_ESSENTIALS_H

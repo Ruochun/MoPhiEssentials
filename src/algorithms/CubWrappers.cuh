@@ -50,12 +50,12 @@ struct CubOpMax {
 
 template <typename T1, typename T2>
 inline void cubSelectFlagged(T1* d_in,
-                                T1* d_out,
-                                T2* d_flags,
-                                size_t* d_num_out,
-                                size_t n,
-                                cudaStream_t& this_stream,
-                                MoPhiScratchData& scratchPad) {
+                             T1* d_out,
+                             T2* d_flags,
+                             size_t* d_num_out,
+                             size_t n,
+                             cudaStream_t& this_stream,
+                             MoPhiScratchData& scratchPad) {
     size_t cub_scratch_bytes = 0;
     cub::DeviceSelect::Flagged(NULL, cub_scratch_bytes, d_in, d_flags, d_out, d_num_out, n, this_stream);
     MOPHI_GPU_CALL(cudaStreamSynchronize(this_stream));
@@ -82,12 +82,12 @@ inline void cubPrefixScan(T1* d_in, T2* d_out, size_t n, cudaStream_t& this_stre
 
 template <typename T1, typename T2>
 inline void cubSortByKeys(T1* d_keys_in,
-                             T1* d_keys_out,
-                             T2* d_vals_in,
-                             T2* d_vals_out,
-                             size_t n,
-                             cudaStream_t& this_stream,
-                             MoPhiScratchData& scratchPad) {
+                          T1* d_keys_out,
+                          T2* d_vals_in,
+                          T2* d_vals_out,
+                          size_t n,
+                          cudaStream_t& this_stream,
+                          MoPhiScratchData& scratchPad) {
     size_t cub_scratch_bytes = 0;
     cub::DeviceRadixSort::SortPairs(NULL, cub_scratch_bytes, d_keys_in, d_keys_out, d_vals_in, d_vals_out, n, 0,
                                     sizeof(T1) * MOPHI_BITS_PER_BYTE, this_stream);
@@ -100,11 +100,11 @@ inline void cubSortByKeys(T1* d_keys_in,
 
 template <typename T1>
 inline void cubUnique(T1* d_in,
-                         T1* d_out,
-                         size_t* d_num_out,
-                         size_t n,
-                         cudaStream_t& this_stream,
-                         MoPhiScratchData& scratchPad) {
+                      T1* d_out,
+                      size_t* d_num_out,
+                      size_t n,
+                      cudaStream_t& this_stream,
+                      MoPhiScratchData& scratchPad) {
     size_t cub_scratch_bytes = 0;
     cub::DeviceSelect::Unique(NULL, cub_scratch_bytes, d_in, d_out, d_num_out, n, this_stream);
     MOPHI_GPU_CALL(cudaStreamSynchronize(this_stream));
@@ -115,12 +115,12 @@ inline void cubUnique(T1* d_in,
 
 template <typename T1, typename T2>
 inline void cubRunLengthEncode(T1* d_in,
-                                  T1* d_unique_out,
-                                  T2* d_counts_out,
-                                  size_t* d_num_out,
-                                  size_t n,
-                                  cudaStream_t& this_stream,
-                                  MoPhiScratchData& scratchPad) {
+                               T1* d_unique_out,
+                               T2* d_counts_out,
+                               size_t* d_num_out,
+                               size_t n,
+                               cudaStream_t& this_stream,
+                               MoPhiScratchData& scratchPad) {
     size_t cub_scratch_bytes = 0;
     cub::DeviceRunLengthEncode::Encode(NULL, cub_scratch_bytes, d_in, d_unique_out, d_counts_out, d_num_out, n,
                                        this_stream);
@@ -133,14 +133,14 @@ inline void cubRunLengthEncode(T1* d_in,
 
 template <typename T1, typename T2, typename T3>
 inline void cubReduceByKeys(T1* d_keys_in,
-                               T1* d_unique_out,
-                               T2* d_vals_in,
-                               T2* d_aggregates_out,
-                               size_t* d_num_out,
-                               T3& reduce_op,
-                               size_t n,
-                               cudaStream_t& this_stream,
-                               MoPhiScratchData& scratchPad) {
+                            T1* d_unique_out,
+                            T2* d_vals_in,
+                            T2* d_aggregates_out,
+                            size_t* d_num_out,
+                            T3& reduce_op,
+                            size_t n,
+                            cudaStream_t& this_stream,
+                            MoPhiScratchData& scratchPad) {
     size_t cub_scratch_bytes = 0;
     cub::DeviceReduce::ReduceByKey(NULL, cub_scratch_bytes, d_keys_in, d_unique_out, d_vals_in, d_aggregates_out,
                                    d_num_out, reduce_op, n, this_stream);

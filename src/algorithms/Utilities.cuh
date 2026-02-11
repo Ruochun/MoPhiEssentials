@@ -4,7 +4,7 @@
 #ifndef MOPHI_STATIC_DEVICE_UTIL_CUH
 #define MOPHI_STATIC_DEVICE_UTIL_CUH
 
-#include <DEM/common/Defines.hpp>
+#include <common/Defines.hpp>
 
 namespace mophi {
 
