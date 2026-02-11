@@ -33,14 +33,14 @@ int main() {
     // Test 3: Timer
     std::cout << "3. Testing Timer...\n";
     Timer timer;
-    timer.Start();
+    timer.start();
     // Simulate some work
     volatile int sum_val = 0;
     for (int i = 0; i < 1000000; i++) {
         sum_val += i;
     }
-    timer.Stop();
-    std::cout << "   Elapsed time: " << timer.GetElapsedTimeSeconds() << " seconds\n";
+    timer.stop();
+    std::cout << "   Elapsed time: " << timer.GetTimeSeconds() << " seconds\n";
     std::cout << "   ✓ Timer works!\n\n";
 
     // Test 4: API Version

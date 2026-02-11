@@ -19,7 +19,7 @@
  *     // ...
  * }
  * @endcode
- * 
+ *
  * @note For .cu files that need GPU kernels and device code, also include:
  * @code{.cu}
  * #include <MoPhiEssentials.h>

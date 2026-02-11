@@ -4,17 +4,17 @@
 /**
  * @file MoPhiEssentialsGPU.cuh
  * @brief GPU/CUDA-specific headers for MoPhiEssentials
- * 
+ *
  * This header includes all CUDA device code and kernel utilities that require
  * nvcc (NVIDIA CUDA Compiler) for compilation. Use this header in .cu files
  * that need GPU functionality.
- * 
+ *
  * For CPU-only code, use MoPhiEssentials.h instead.
- * 
+ *
  * @code{.cu}
  * #include <MoPhiEssentials.h>      // CPU-side functionality
  * #include <MoPhiEssentialsGPU.cuh> // GPU-side functionality
- * 
+ *
  * __global__ void myKernel() {
  *     // Use GPU utilities here
  * }
