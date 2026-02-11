@@ -3,11 +3,11 @@
 
 /**
  * @file MoPhiEssentials.h
- * @brief One-stop include header for all MoPhiEssentials public API
+ * @brief One-stop include header for MoPhiEssentials CPU-side public API
  *
- * This header provides convenient access to all public classes, functions,
- * and utilities in the MoPhiEssentials library. Simply include this single
- * header to use MoPhiEssentials in your project.
+ * This header provides convenient access to all CPU-compatible classes, functions,
+ * and utilities in the MoPhiEssentials library. For GPU/CUDA-specific functionality
+ * that requires nvcc compilation, use MoPhiEssentialsGPU.cuh instead.
  *
  * @code{.cpp}
  * #include <MoPhiEssentials.h>
@@ -18,6 +18,12 @@
  *     mophi::GpuManager gpuMgr;
  *     // ...
  * }
+ * @endcode
+ * 
+ * @note For .cu files that need GPU kernels and device code, also include:
+ * @code{.cu}
+ * #include <MoPhiEssentials.h>
+ * #include <MoPhiEssentialsGPU.cuh>
  * @endcode
  */
 
@@ -67,19 +73,6 @@
 // ============================================================================
 #include <core/GpuManager.h>
 #include <core/ThreadManager.hpp>
-
-// ============================================================================
-// Kernel Utilities (Device Code)
-// ============================================================================
-#include <kernels/Compression.cuh>
-#include <kernels/HelperKernels.cuh>
-#include <kernels/CUDAMathHelpers.cuh>
-
-// ============================================================================
-// Algorithm Utilities
-// ============================================================================
-#include <algorithms/Utilities.cuh>
-#include <algorithms/CubWrappers.cuh>
 
 // ============================================================================
 // Common Data Structures

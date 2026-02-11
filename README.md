@@ -139,15 +139,15 @@ target_link_libraries(your_target PUBLIC mophi_essentials)
 
 ## Example Usage
 
-### Quick Start with Unified Header
+### Quick Start with Unified Headers
 
-The easiest way to use MoPhiEssentials is to include the unified header:
+**For CPU-only code (.cpp files):**
 
 ```cpp
 #include <MoPhiEssentials.h>
 
 int main() {
-    // All MoPhiEssentials features available with one include!
+    // CPU-side MoPhiEssentials features
     mophi::Real3f vec(1.0f, 2.0f, 3.0f);
     mophi::DeviceArray<float> arr(1000);
     mophi::GpuManager gpuMgr;
@@ -155,6 +155,26 @@ int main() {
     // ...
 }
 ```
+
+**For CUDA code (.cu files) that needs GPU kernels:**
+
+```cu
+#include <MoPhiEssentials.h>      // CPU-side functionality
+#include <MoPhiEssentialsGPU.cuh> // GPU-side kernels and device code
+
+__global__ void myKernel() {
+    // Use GPU utilities like kernel helpers, CUB wrappers, etc.
+}
+
+int main() {
+    // Use both CPU and GPU functionality
+    myKernel<<<1, 1>>>();
+    // ...
+}
+```
+
+> **Note:** `MoPhiEssentialsGPU.cuh` contains headers that require nvcc (NVIDIA CUDA Compiler). 
+> Only include it in .cu files. For regular C++ compilation, use `MoPhiEssentials.h` only.
 
 ### Using Real3 Vectors
 
@@ -223,7 +243,8 @@ The `demo/` directory contains example programs:
 - `HelloWorld.cpp` - Basic timer usage
 - `TestMsg.cpp` - Logger demonstration
 - `TestReal3.cu` - Vector operations on CPU and GPU
-- `TestUnifiedHeader.cpp` - Demonstrates using the unified `MoPhiEssentials.h` header
+- `TestUnifiedHeader.cpp` - Demonstrates using the unified `MoPhiEssentials.h` header (CPU-only)
+- `TestUnifiedGPUHeader.cu` - Demonstrates using both `MoPhiEssentials.h` and `MoPhiEssentialsGPU.cuh` together
 - `TestDualArray.cpp` - CPU-GPU data synchronization
 - `TestContainers.cpp` - Device array pool management
 
@@ -232,7 +253,8 @@ Build and run demos:
 cd build/bin
 ./TestReal3
 ./TestMsg
-./TestUnifiedHeader  # Shows usage of MoPhiEssentials.h
+./TestUnifiedHeader     # Shows usage of MoPhiEssentials.h (CPU-side)
+./TestUnifiedGPUHeader  # Shows usage of both CPU and GPU unified headers
 ```
 
 ## API Documentation
