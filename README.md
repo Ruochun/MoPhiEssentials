@@ -139,10 +139,28 @@ target_link_libraries(your_target PUBLIC mophi_essentials)
 
 ## Example Usage
 
+### Quick Start with Unified Header
+
+The easiest way to use MoPhiEssentials is to include the unified header:
+
+```cpp
+#include <MoPhiEssentials.h>
+
+int main() {
+    // All MoPhiEssentials features available with one include!
+    mophi::Real3f vec(1.0f, 2.0f, 3.0f);
+    mophi::DeviceArray<float> arr(1000);
+    mophi::GpuManager gpuMgr;
+    mophi::Logger::GetLogger().SetVerbosity(mophi::INFO);
+    // ...
+}
+```
+
 ### Using Real3 Vectors
 
 ```cpp
-#include <core/Real3.hpp>
+#include <MoPhiEssentials.h>
+// Or individually: #include <core/Real3.hpp>
 
 mophi::Real3f a(1.0f, 2.0f, 3.0f);
 mophi::Real3f b(4.0f, 5.0f, 6.0f);
@@ -157,7 +175,8 @@ float len = a.Length();
 ### Using Device Arrays
 
 ```cpp
-#include <core/DataClasses.hpp>
+#include <MoPhiEssentials.h>
+// Or individually: #include <core/DataClasses.hpp>
 
 mophi::DeviceArray<float> gpu_array(1000);
 gpu_array.resize(2000);
@@ -167,7 +186,8 @@ gpu_array.SetVal(3.14f, 5);  // Set value at index 5
 ### Using Dual Arrays (CPU-GPU)
 
 ```cpp
-#include <core/DataMigrationHelper.hpp>
+#include <MoPhiEssentials.h>
+// Or individually: #include <core/DataMigrationHelper.hpp>
 
 mophi::DualArray<float> dual_array(1000, 1.0f);
 
@@ -186,7 +206,8 @@ dual_array.ToHost();
 ### Using GPU Manager
 
 ```cpp
-#include <core/GpuManager.h>
+#include <MoPhiEssentials.h>
+// Or individually: #include <core/GpuManager.h>
 
 mophi::GpuManager gpuMgr(4, {0, 1});  // 4 streams across GPUs 0 and 1
 
@@ -202,6 +223,7 @@ The `demo/` directory contains example programs:
 - `HelloWorld.cpp` - Basic timer usage
 - `TestMsg.cpp` - Logger demonstration
 - `TestReal3.cu` - Vector operations on CPU and GPU
+- `TestUnifiedHeader.cpp` - Demonstrates using the unified `MoPhiEssentials.h` header
 - `TestDualArray.cpp` - CPU-GPU data synchronization
 - `TestContainers.cpp` - Device array pool management
 
@@ -210,6 +232,7 @@ Build and run demos:
 cd build/bin
 ./TestReal3
 ./TestMsg
+./TestUnifiedHeader  # Shows usage of MoPhiEssentials.h
 ```
 
 ## API Documentation

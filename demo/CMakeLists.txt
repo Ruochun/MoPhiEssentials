@@ -19,6 +19,7 @@ SET(DEMOS
     TestDualArray.cpp
     TestContainers.cpp
     TestReal3.cu
+    TestUnifiedHeader.cpp
 )
 
 # ------------------------------------------------------------------------------
