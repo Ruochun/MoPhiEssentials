@@ -9,7 +9,6 @@
 #include <cuda_runtime_api.h>
 #include <vector>
 #include <mutex>
-#include <core/ApiVersion.h>
 
 namespace mophi {
 
