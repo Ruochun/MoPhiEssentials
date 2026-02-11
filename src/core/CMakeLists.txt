@@ -6,16 +6,18 @@
 message(STATUS "==== Configuring Core Components ====")
 
 set(core_message "[moCore]")
-message(STATUS "${core_message} Using static API version header with defaults")
-
-# ApiVersion.h now exists as a static header in the source tree with sensible defaults
-# This allows IDEs to parse it before the build is configured
+message(STATUS "${core_message} Generating API version header...")
+configure_file(
+    ApiVersion.h.in ApiVersion.h
+    @ONLY
+)
 
 add_library(moCore OBJECT)
 
 target_include_directories(
     moCore
     PUBLIC $<BUILD_INTERFACE:${ProjectIncludeSource}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    PUBLIC $<BUILD_INTERFACE:${ProjectIncludeGenerated}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
 target_link_libraries(
@@ -24,7 +26,7 @@ target_link_libraries(
 )
 
 set(core_headers
-    ${CMAKE_CURRENT_SOURCE_DIR}/ApiVersion.h
+    ${CMAKE_BINARY_DIR}/src/core/ApiVersion.h
     ${CMAKE_CURRENT_SOURCE_DIR}/BaseClasses.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/CudaAllocator.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ManagedMemory.hpp
@@ -61,5 +63,12 @@ install(
         FILES_MATCHING 
             PATTERN "*.h"
             PATTERN "*.hpp"
-            PATTERN "*.in" EXCLUDE
+)
+
+# Install Generated Headers 
+install(
+    FILES 
+        "${CMAKE_BINARY_DIR}/src/core/ApiVersion.h"
+    DESTINATION
+        ${CMAKE_INSTALL_INCLUDEDIR}/core
 )
