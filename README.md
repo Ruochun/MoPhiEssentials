@@ -151,7 +151,7 @@ int main() {
     mophi::Real3f vec(1.0f, 2.0f, 3.0f);
     mophi::DeviceArray<float> arr(1000);
     mophi::GpuManager gpuMgr;
-    mophi::Logger::GetInstance().SetVerbosity(mophi::INFO);
+    mophi::Logger::GetInstance().SetVerbosity(VERBOSITY_INFO);
     // ...
 }
 ```
