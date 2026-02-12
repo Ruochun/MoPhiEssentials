@@ -143,4 +143,7 @@ install(
 # ---------------------------------------------------------------------------- #
 # Build embedded demos
 # ---------------------------------------------------------------------------- #
-add_subdirectory(demo)
+# Only build demos when MoPhiEssentials is the main project, not as a submodule
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    add_subdirectory(demo)
+endif()
