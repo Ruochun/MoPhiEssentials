@@ -507,8 +507,8 @@ class DualArray : private NonCopyable {
         }
     }
 
-    T& operator[](size_t i) { return (*host())[i]; }
-    const T& operator[](size_t i) const { return (*host())[i]; }
+    T& operator[](size_t i) { return (host())[i]; }
+    const T& operator[](size_t i) const { return (host())[i]; }
 
   private:
     std::unique_ptr<PinnedVector> m_pinned_vec = nullptr;
