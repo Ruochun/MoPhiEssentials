@@ -401,6 +401,12 @@ class DualArray : private NonCopyable {
         std::copy(data.begin(), data.begin() + count, m_host_vec_ptr->begin() + start);
     }
 
+    // Set all values to a single value on host, updating time stamps (will sync to device when used)
+    void SetVal(const T& data) {
+        pre_host_access();
+        std::fill(m_host_vec_ptr->begin(), m_host_vec_ptr->end(), data);
+    }
+
     // Force set a single value on host and device, bypassing time stamp records
     void SetVal_ForceSync(const T& data, size_t start) {
         (*m_host_vec_ptr)[start] = data;
