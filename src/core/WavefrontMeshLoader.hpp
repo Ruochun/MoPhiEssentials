@@ -688,7 +688,7 @@ class BuildMesh : public GeometryInterface {
         return vcount;
     }
 
-    inline virtual void NodeTriangle(const GeometryVertex* v1,
+    virtual inline void NodeTriangle(const GeometryVertex* v1,
                               const GeometryVertex* v2,
                               const GeometryVertex* v3,
                               bool textured) override {
