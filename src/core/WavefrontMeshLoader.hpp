@@ -583,8 +583,8 @@ inline void OBJ::GetVertex(GeometryVertex& v, const char* face) const {
 #endif
 
 inline int OBJ::ParseLine(int /*lineno*/,
-                   int argc,
-                   const char** argv)  // return true to continue parsing, return false to abort parsing process
+                          int argc,
+                          const char** argv)  // return true to continue parsing, return false to abort parsing process
 {
     int ret = 0;
 
@@ -689,9 +689,9 @@ class BuildMesh : public GeometryInterface {
     }
 
     virtual inline void NodeTriangle(const GeometryVertex* v1,
-                              const GeometryVertex* v2,
-                              const GeometryVertex* v3,
-                              bool textured) override {
+                                     const GeometryVertex* v2,
+                                     const GeometryVertex* v3,
+                                     bool textured) override {
         mIndices.push_back(GetIndex(v1->mPos, textured ? v1->mTexel : NULL));
         mIndices.push_back(GetIndex(v2->mPos, textured ? v2->mTexel : NULL));
         mIndices.push_back(GetIndex(v3->mPos, textured ? v3->mTexel : NULL));
