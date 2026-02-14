@@ -192,22 +192,25 @@ class Logger : private NonCopyable, public Singleton<Logger> {
 // Logging utils for easy usage
 // -----------------------------
 
-#define MOPHI_ERROR(...) \
-    throw SolverException(Logger::GetInstance().Logf(MessageType::Error, __func__, __FILE__, __LINE__, __VA_ARGS__))
+#define MOPHI_ERROR(...)          \
+    throw mophi::SolverException( \
+        mophi::Logger::GetInstance().Logf(mophi::MessageType::Error, __func__, __FILE__, __LINE__, __VA_ARGS__))
 
 #define MOPHI_ERROR_NOTHROW(...) \
-    Logger::GetInstance().Logf(MessageType::Error, __func__, __FILE__, __LINE__, __VA_ARGS__)
+    mophi::Logger::GetInstance().Logf(mophi::MessageType::Error, __func__, __FILE__, __LINE__, __VA_ARGS__)
 
-#define MOPHI_WARNING(...) Logger::GetInstance().Logf(MessageType::Warning, __func__, __FILE__, __LINE__, __VA_ARGS__)
+#define MOPHI_WARNING(...) \
+    mophi::Logger::GetInstance().Logf(mophi::MessageType::Warning, __func__, __FILE__, __LINE__, __VA_ARGS__)
 
-#define MOPHI_INFO(...) Logger::GetInstance().Logf(MessageType::Info, __func__, __FILE__, __LINE__, __VA_ARGS__)
+#define MOPHI_INFO(...) \
+    mophi::Logger::GetInstance().Logf(mophi::MessageType::Info, __func__, __FILE__, __LINE__, __VA_ARGS__)
 
-#define MOPHI_STATUS(identifier, ...)                                                      \
-    do {                                                                                   \
-        constexpr size_t BUF_SIZE = 2048;                                                  \
-        char buffer[BUF_SIZE];                                                             \
-        std::snprintf(buffer, BUF_SIZE, __VA_ARGS__);                                      \
-        Logger::GetInstance().LogStatus(identifier, __func__, buffer, __FILE__, __LINE__); \
+#define MOPHI_STATUS(identifier, ...)                                                             \
+    do {                                                                                          \
+        constexpr size_t BUF_SIZE = 2048;                                                         \
+        char buffer[BUF_SIZE];                                                                    \
+        std::snprintf(buffer, BUF_SIZE, __VA_ARGS__);                                             \
+        mophi::Logger::GetInstance().LogStatus(identifier, __func__, buffer, __FILE__, __LINE__); \
     } while (0)
 
 #define MOPHI_GPU_CALL(code)                                       \

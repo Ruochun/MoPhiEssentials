@@ -191,7 +191,7 @@ InPlaceParser::~InPlaceParser(void) {
     }
 }
 
-#define MAXARGS 512
+#define MOPHI_WAVEFRONT_MAXARGS 512
 
 bool InPlaceParser::IsHard(char c) {
     return mHard[c] == ST_HARD;
@@ -200,7 +200,7 @@ bool InPlaceParser::IsHard(char c) {
 char* InPlaceParser::AddHard(int& argc, const char** argv, char* foo) {
     while (IsHard(*foo)) {
         const char* hard = &mHardString[*foo * 2];
-        if (argc < MAXARGS) {
+        if (argc < MOPHI_WAVEFRONT_MAXARGS) {
             argv[argc++] = hard;
         }
         foo++;
@@ -227,12 +227,12 @@ bool InPlaceParser::IsNonSeparator(char c) {
 int InPlaceParser::ProcessLine(int lineno, char* line, InPlaceParserInterface* callback) {
     int ret = 0;
 
-    const char* argv[MAXARGS];
+    const char* argv[MOPHI_WAVEFRONT_MAXARGS];
     int argc = 0;
 
     char* foo = line;
 
-    while (!EOS(*foo) && argc < MAXARGS) {
+    while (!EOS(*foo) && argc < MOPHI_WAVEFRONT_MAXARGS) {
         foo = SkipSpaces(foo);  // skip any leading spaces
 
         if (EOS(*foo))
@@ -241,7 +241,7 @@ int InPlaceParser::ProcessLine(int lineno, char* line, InPlaceParserInterface* c
         if (*foo == mQuoteChar)  // if it is an open quote
         {
             foo++;
-            if (argc < MAXARGS) {
+            if (argc < MOPHI_WAVEFRONT_MAXARGS) {
                 argv[argc++] = foo;
             }
             while (!EOS(*foo) && *foo != mQuoteChar)
@@ -261,7 +261,7 @@ int InPlaceParser::ProcessLine(int lineno, char* line, InPlaceParserInterface* c
                     quote = true;
                 }
 
-                if (argc < MAXARGS) {
+                if (argc < MOPHI_WAVEFRONT_MAXARGS) {
                     argv[argc++] = foo;
                 }
 
@@ -285,7 +285,7 @@ int InPlaceParser::ProcessLine(int lineno, char* line, InPlaceParserInterface* c
                     {
                         const char* hard = &mHardString[*foo * 2];
                         *foo = 0;
-                        if (argc < MAXARGS) {
+                        if (argc < MOPHI_WAVEFRONT_MAXARGS) {
                             argv[argc++] = hard;
                         }
                         foo++;
@@ -365,12 +365,12 @@ const char** InPlaceParser::GetArglist(
 {
     const char** ret = 0;
 
-    static const char* argv[MAXARGS];
+    static const char* argv[MOPHI_WAVEFRONT_MAXARGS];
     int argc = 0;
 
     char* foo = line;
 
-    while (!EOS(*foo) && argc < MAXARGS) {
+    while (!EOS(*foo) && argc < MOPHI_WAVEFRONT_MAXARGS) {
         foo = SkipSpaces(foo);  // skip any leading spaces
 
         if (EOS(*foo))
@@ -379,7 +379,7 @@ const char** InPlaceParser::GetArglist(
         if (*foo == mQuoteChar)  // if it is an open quote
         {
             foo++;
-            if (argc < MAXARGS) {
+            if (argc < MOPHI_WAVEFRONT_MAXARGS) {
                 argv[argc++] = foo;
             }
             while (!EOS(*foo) && *foo != mQuoteChar)
@@ -399,7 +399,7 @@ const char** InPlaceParser::GetArglist(
                     quote = true;
                 }
 
-                if (argc < MAXARGS) {
+                if (argc < MOPHI_WAVEFRONT_MAXARGS) {
                     argv[argc++] = foo;
                 }
 
@@ -423,7 +423,7 @@ const char** InPlaceParser::GetArglist(
                     {
                         const char* hard = &mHardString[*foo * 2];
                         *foo = 0;
-                        if (argc < MAXARGS) {
+                        if (argc < MOPHI_WAVEFRONT_MAXARGS) {
                             argv[argc++] = hard;
                         }
                         foo++;
@@ -576,9 +576,9 @@ void OBJ::GetVertex(GeometryVertex& v, const char* face) const {
 }
 
 #if defined(_WIN32) || defined(_WIN64)
-    #define STRCASECMP _stricmp
+    #define MOPHI_STRCASECMP _stricmp
 #else
-    #define STRCASECMP strcasecmp
+    #define MOPHI_STRCASECMP strcasecmp
 #endif
 
 int OBJ::ParseLine(int /*lineno*/,
@@ -590,27 +590,27 @@ int OBJ::ParseLine(int /*lineno*/,
     if (argc >= 1) {
         const char* foo = argv[0];
         if (*foo != '#') {
-            if (STRCASECMP(argv[0], "v") == 0 && argc == 4) {
+            if (MOPHI_STRCASECMP(argv[0], "v") == 0 && argc == 4) {
                 float vx = (float)atof(argv[1]);
                 float vy = (float)atof(argv[2]);
                 float vz = (float)atof(argv[3]);
                 mVerts.push_back(vx);
                 mVerts.push_back(vy);
                 mVerts.push_back(vz);
-            } else if (STRCASECMP(argv[0], "vt") == 0 && (argc == 3 || argc == 4)) {
+            } else if (MOPHI_STRCASECMP(argv[0], "vt") == 0 && (argc == 3 || argc == 4)) {
                 // ignore 3rd component if present
                 float tx = (float)atof(argv[1]);
                 float ty = (float)atof(argv[2]);
                 mTexels.push_back(tx);
                 mTexels.push_back(ty);
-            } else if (STRCASECMP(argv[0], "vn") == 0 && argc == 4) {
+            } else if (MOPHI_STRCASECMP(argv[0], "vn") == 0 && argc == 4) {
                 float normalx = (float)atof(argv[1]);
                 float normaly = (float)atof(argv[2]);
                 float normalz = (float)atof(argv[3]);
                 mNormals.push_back(normalx);
                 mNormals.push_back(normaly);
                 mNormals.push_back(normalz);
-            } else if (STRCASECMP(argv[0], "f") == 0 && argc >= 4) {
+            } else if (MOPHI_STRCASECMP(argv[0], "f") == 0 && argc >= 4) {
                 // ***ALEX*** do not use the BuildMesh stuff
                 ////int vcount = argc - 1;
                 const char* argvT[3];
