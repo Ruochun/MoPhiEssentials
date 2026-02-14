@@ -117,6 +117,21 @@ class DualStruct : private NonCopyable {
     // Destructor: Free memory
     ~DualStruct() { free(); }
 
+    // Set the value on host and mark it as modified
+    void SetVal(const T& val) {
+        *host_data = val;
+        MarkModified();
+    }
+
+    // Get the value from host (const version)
+    const T& GetValue() const { return *host_data; }
+    // Get the value from host (non-const version, marks as modified)
+    T& GetValue() {
+        MarkModified();
+        return *host_data;
+    }
+
+    // Free both host and device memory
     void free() {
         host_ptr_dealloc(host_data);      // Free pinned memory
         device_ptr_dealloc(device_data);  // Free device memory
@@ -401,6 +416,12 @@ class DualArray : private NonCopyable {
         std::copy(data.begin(), data.begin() + count, m_host_vec_ptr->begin() + start);
     }
 
+    // Set all values to a single value on host, updating time stamps (will sync to device when used)
+    void SetVal(const T& data) {
+        pre_host_access();
+        std::fill(m_host_vec_ptr->begin(), m_host_vec_ptr->end(), data);
+    }
+
     // Force set a single value on host and device, bypassing time stamp records
     void SetVal_ForceSync(const T& data, size_t start) {
         (*m_host_vec_ptr)[start] = data;
@@ -486,8 +507,8 @@ class DualArray : private NonCopyable {
         }
     }
 
-    T& operator[](size_t i) { return (*host())[i]; }
-    const T& operator[](size_t i) const { return (*host())[i]; }
+    T& operator[](size_t i) { return (host())[i]; }
+    const T& operator[](size_t i) const { return (host())[i]; }
 
   private:
     std::unique_ptr<PinnedVector> m_pinned_vec = nullptr;
@@ -583,6 +604,24 @@ class DeviceArray : private NonCopyable {
     T* data() { return m_data; }
 
     const T* data() const { return m_data; }
+
+    // Force set a single value on device
+    void SetVal(const T& data, size_t idx) {
+        MOPHI_GPU_CALL(cudaMemcpy(m_data + idx, &data, sizeof(T), cudaMemcpyHostToDevice));
+    }
+
+    // Force set values using a vector on device
+    void SetVal(const std::vector<T>& data, size_t start, size_t n = 0) {
+        size_t count = (n > 0) ? n : data.size();
+        MOPHI_GPU_CALL(cudaMemcpy(m_data + start, data.data(), count * sizeof(T), cudaMemcpyHostToDevice));
+    }
+
+    // Force set all values to a single value on device
+    void SetVal(const T& data) {
+        // This method is not super efficient, but it's not meant for performance-critical paths
+        std::vector<T> temp(size(), data);
+        MOPHI_GPU_CALL(cudaMemcpy(m_data, temp.data(), size() * sizeof(T), cudaMemcpyHostToDevice));
+    }
 
   private:
     T* m_data = nullptr;

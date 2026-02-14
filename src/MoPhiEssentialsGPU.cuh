@@ -27,14 +27,14 @@
 // ============================================================================
 // Kernel Utilities (Device Code) - Requires nvcc
 // ============================================================================
-#include <kernels/Compression.cuh>
-#include <kernels/HelperKernels.cuh>
-#include <kernels/CUDAMathHelpers.cuh>
+#include "kernels/Compression.cuh"
+#include "kernels/HelperKernels.cuh"
+#include "kernels/CUDAMathHelpers.cuh"
 
 // ============================================================================
 // Algorithm Utilities (Device Code) - Requires nvcc
 // ============================================================================
-#include <algorithms/Utilities.cuh>
-#include <algorithms/CubWrappers.cuh>
+#include "algorithms/Utilities.cuh"
+#include "algorithms/CubWrappers.cuh"
 
 #endif  // MOPHI_ESSENTIALS_GPU_CUH
