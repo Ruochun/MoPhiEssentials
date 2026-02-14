@@ -36,6 +36,7 @@
 #include <fstream>
 #include <map>
 #include <unordered_map>
+#include <vector>
 #include <cassert>
 #include <cstring>
 
@@ -157,7 +158,7 @@ class InPlaceParser {
 /*******************************************************************/
 /******************** InParser.cpp  ********************************/
 /*******************************************************************/
-void InPlaceParser::SetFile(const char* fname) {
+inline void InPlaceParser::SetFile(const char* fname) {
     if (mMyAlloc) {
         free(mData);
     }
@@ -185,7 +186,7 @@ void InPlaceParser::SetFile(const char* fname) {
     }
 }
 
-InPlaceParser::~InPlaceParser(void) {
+inline InPlaceParser::~InPlaceParser(void) {
     if (mMyAlloc) {
         free(mData);
     }
@@ -193,11 +194,11 @@ InPlaceParser::~InPlaceParser(void) {
 
 #define MOPHI_WAVEFRONT_MAXARGS 512
 
-bool InPlaceParser::IsHard(char c) {
+inline bool InPlaceParser::IsHard(char c) {
     return mHard[c] == ST_HARD;
 }
 
-char* InPlaceParser::AddHard(int& argc, const char** argv, char* foo) {
+inline char* InPlaceParser::AddHard(int& argc, const char** argv, char* foo) {
     while (IsHard(*foo)) {
         const char* hard = &mHardString[*foo * 2];
         if (argc < MOPHI_WAVEFRONT_MAXARGS) {
@@ -208,23 +209,23 @@ char* InPlaceParser::AddHard(int& argc, const char** argv, char* foo) {
     return foo;
 }
 
-bool InPlaceParser::IsWhiteSpace(char c) {
+inline bool InPlaceParser::IsWhiteSpace(char c) {
     return mHard[c] == ST_SOFT;
 }
 
-char* InPlaceParser::SkipSpaces(char* foo) {
+inline char* InPlaceParser::SkipSpaces(char* foo) {
     while (!EOS(*foo) && IsWhiteSpace(*foo))
         foo++;
     return foo;
 }
 
-bool InPlaceParser::IsNonSeparator(char c) {
+inline bool InPlaceParser::IsNonSeparator(char c) {
     if (!IsHard(c) && !IsWhiteSpace(c) && c != 0)
         return true;
     return false;
 }
 
-int InPlaceParser::ProcessLine(int lineno, char* line, InPlaceParserInterface* callback) {
+inline int InPlaceParser::ProcessLine(int lineno, char* line, InPlaceParserInterface* callback) {
     int ret = 0;
 
     const char* argv[MOPHI_WAVEFRONT_MAXARGS];
@@ -304,7 +305,7 @@ int InPlaceParser::ProcessLine(int lineno, char* line, InPlaceParserInterface* c
     return ret;
 }
 
-int InPlaceParser::Parse(
+inline int InPlaceParser::Parse(
     InPlaceParserInterface* callback)  // returns true if entire file was parsed, false if it aborted for some reason
 {
     assert(callback);
@@ -347,7 +348,7 @@ int InPlaceParser::Parse(
     return ret;
 }
 
-void InPlaceParser::DefaultSymbols(void) {
+inline void InPlaceParser::DefaultSymbols(void) {
     SetHardSeparator(',');
     SetHardSeparator('(');
     SetHardSeparator(')');
@@ -359,7 +360,7 @@ void InPlaceParser::DefaultSymbols(void) {
     SetCommentSymbol('#');
 }
 
-const char** InPlaceParser::GetArglist(
+inline const char** InPlaceParser::GetArglist(
     char* line,
     int& count)  // convert source string into an arg list, this is a destructive parse.
 {
@@ -496,7 +497,7 @@ class OBJ : public InPlaceParserInterface {
 /******************** Obj.cpp  ********************************/
 /*******************************************************************/
 
-int OBJ::LoadMesh(const char* fname, GeometryInterface* iface, bool textured) {
+inline int OBJ::LoadMesh(const char* fname, GeometryInterface* iface, bool textured) {
     mTextured = textured;
 
     mVerts.clear();
@@ -526,7 +527,7 @@ return ret;
 }
 ****/
 
-void OBJ::GetVertex(GeometryVertex& v, const char* face) const {
+inline void OBJ::GetVertex(GeometryVertex& v, const char* face) const {
     v.mPos[0] = 0;
     v.mPos[1] = 0;
     v.mPos[2] = 0;
@@ -581,7 +582,7 @@ void OBJ::GetVertex(GeometryVertex& v, const char* face) const {
     #define MOPHI_STRCASECMP strcasecmp
 #endif
 
-int OBJ::ParseLine(int /*lineno*/,
+inline int OBJ::ParseLine(int /*lineno*/,
                    int argc,
                    const char** argv)  // return true to continue parsing, return false to abort parsing process
 {
@@ -655,7 +656,7 @@ int OBJ::ParseLine(int /*lineno*/,
 
 class BuildMesh : public GeometryInterface {
   public:
-    int GetIndex(const float* p, const float* texCoord) {
+    inline int GetIndex(const float* p, const float* texCoord) {
         int vcount = (int)mVertices.size() / 3;
 
         if (vcount > 0) {
@@ -687,7 +688,7 @@ class BuildMesh : public GeometryInterface {
         return vcount;
     }
 
-    virtual void NodeTriangle(const GeometryVertex* v1,
+    inline virtual void NodeTriangle(const GeometryVertex* v1,
                               const GeometryVertex* v2,
                               const GeometryVertex* v3,
                               bool textured) override {
