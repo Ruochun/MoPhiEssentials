@@ -247,6 +247,7 @@ The `demo/` directory contains example programs:
 - `TestUnifiedGPUHeader.cu` - Demonstrates using both `MoPhiEssentials.h` and `MoPhiEssentialsGPU.cuh` together
 - `TestDualArray.cpp` - CPU-GPU data synchronization
 - `TestContainers.cpp` - Device array pool management
+- `TestMeshIO.cpp` - Mesh loading and writing with VTU format
 
 Build and run demos:
 ```bash
@@ -255,6 +256,7 @@ cd build/bin
 ./TestMsg
 ./TestUnifiedHeader     # Shows usage of MoPhiEssentials.h (CPU-side)
 ./TestUnifiedGPUHeader  # Shows usage of both CPU and GPU unified headers
+./TestMeshIO            # Tests mesh I/O functionality with beam.vtu
 ```
 
 ## API Documentation

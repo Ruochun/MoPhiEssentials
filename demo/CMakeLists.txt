@@ -21,6 +21,7 @@ SET(DEMOS
     TestReal3.cu
     TestUnifiedHeader.cpp
     TestUnifiedGPUHeader.cu
+    TestMeshIO.cpp
 )
 
 # ------------------------------------------------------------------------------
