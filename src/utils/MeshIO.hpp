@@ -252,8 +252,9 @@ inline Mesh LoadVtu(const std::string& filename) {
             mesh.topo.hexTags.push_back(read_tag(i));
             mesh.localToGlobalCell.push_back(read_global_cell(i));
             hexCount++;
-        } else if (cell_type == 5 || cell_type == 9 || cell_type == 3 || cell_type == 1) {
-            // Silently ignore lower-dimensional elements (triangles, quads, lines, vertices)
+        } else if (cell_type == 5 /* triangle */ || cell_type == 9 /* quad */ || 
+                   cell_type == 3 /* line */ || cell_type == 1 /* vertex */) {
+            // Silently ignore lower-dimensional elements
         } else {
             // Error on unsupported 3D cell types
             std::ostringstream msg;
