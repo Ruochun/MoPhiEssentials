@@ -198,14 +198,17 @@ inline Mesh LoadVtu(const std::string& filename) {
         }
     }
 
-    // ---- Build topology: only Tets(10) & Hexes(12); ignore Triangles(5) ----
+    // ---- Build topology: only Tets (VTK type 10) & Tet10s (VTK type 24) & Hexes (VTK type 12); ignore Triangles (VTK
+    // type 5) ----
     size_t start = 0;
-    size_t tetCount = 0, hexCount = 0;
+    size_t tetCount = 0, tet10Count = 0, hexCount = 0;
     mesh.topo.tets.clear();
+    mesh.topo.tet10s.clear();
     mesh.topo.hexes.clear();
 
     // Reserve (rough heuristic) for fewer reallocs
     mesh.topo.tets.reserve(types.size());
+    mesh.topo.tet10s.reserve(types.size());
     mesh.topo.hexes.reserve(types.size());
 
     auto read_tag = [&](size_t cellIndex) -> int {
@@ -241,6 +244,15 @@ inline Mesh LoadVtu(const std::string& filename) {
             mesh.topo.tetTags.push_back(read_tag(i));
             mesh.localToGlobalCell.push_back(read_global_cell(i));
             tetCount++;
+        } else if (cell_type == 24 && nverts == 10) {
+            std::array<nodeID_t, 10> v{connectivity[start + 0], connectivity[start + 1], connectivity[start + 2],
+                                       connectivity[start + 3], connectivity[start + 4], connectivity[start + 5],
+                                       connectivity[start + 6], connectivity[start + 7], connectivity[start + 8],
+                                       connectivity[start + 9]};
+            mesh.topo.tet10s.push_back(v);
+            mesh.topo.tet10Tags.push_back(read_tag(i));
+            mesh.localToGlobalCell.push_back(read_global_cell(i));
+            tet10Count++;
         } else if (cell_type == 12 && nverts == 8) {
             std::array<nodeID_t, 8> v{connectivity[start + 0], connectivity[start + 1], connectivity[start + 2],
                                       connectivity[start + 3], connectivity[start + 4], connectivity[start + 5],
@@ -321,6 +333,9 @@ inline Mesh LoadVtu(const std::string& filename) {
         for (auto& t : mesh.topo.tets)
             for (int k = 0; k < 4; ++k)
                 t[k] = permOldToNew[t[k]];
+        for (auto& t10 : mesh.topo.tet10s)
+            for (int k = 0; k < 10; ++k)
+                t10[k] = permOldToNew[t10[k]];
         for (auto& h : mesh.topo.hexes)
             for (int k = 0; k < 8; ++k)
                 h[k] = permOldToNew[h[k]];
@@ -342,6 +357,8 @@ inline Mesh LoadVtu(const std::string& filename) {
     // Ensure tags vector sizes match cell counts
     if (mesh.topo.tetTags.size() != mesh.topo.tets.size())
         mesh.topo.tetTags.assign(mesh.topo.tets.size(), 0);
+    if (mesh.topo.tet10Tags.size() != mesh.topo.tet10s.size())
+        mesh.topo.tet10Tags.assign(mesh.topo.tet10s.size(), 0);
     if (mesh.topo.hexTags.size() != mesh.topo.hexes.size())
         mesh.topo.hexTags.assign(mesh.topo.hexes.size(), 0);
 
@@ -380,7 +397,7 @@ inline void WriteVtu(const std::string& filename, const Mesh& mesh) {
     auto grid = vtk.append_child("UnstructuredGrid");
     auto piece = grid.append_child("Piece");
     const nodeID_t nPoints = (nodeID_t)mesh.geom.nodes.size();
-    const nodeID_t nCells = (nodeID_t)(mesh.topo.tets.size() + mesh.topo.hexes.size());
+    const nodeID_t nCells = (nodeID_t)(mesh.topo.tets.size() + mesh.topo.tet10s.size() + mesh.topo.hexes.size());
     piece.append_attribute("NumberOfPoints") = nPoints;
     piece.append_attribute("NumberOfCells") = nCells;
 
@@ -410,6 +427,9 @@ inline void WriteVtu(const std::string& filename, const Mesh& mesh) {
         std::ostringstream cbuf;
         for (const auto& t : mesh.topo.tets)
             cbuf << t[0] << " " << t[1] << " " << t[2] << " " << t[3] << " ";
+        for (const auto& t10 : mesh.topo.tet10s)
+            for (int k = 0; k < 10; ++k)
+                cbuf << t10[k] << " ";
         for (const auto& h : mesh.topo.hexes)
             for (int k = 0; k < 8; ++k)
                 cbuf << h[k] << " ";
@@ -426,6 +446,10 @@ inline void WriteVtu(const std::string& filename, const Mesh& mesh) {
             off += 4;
             obuf << off << " ";
         }
+        for (size_t i = 0; i < mesh.topo.tet10s.size(); ++i) {
+            off += 10;
+            obuf << off << " ";
+        }
         for (size_t i = 0; i < mesh.topo.hexes.size(); ++i) {
             off += 8;
             obuf << off << " ";
@@ -440,6 +464,8 @@ inline void WriteVtu(const std::string& filename, const Mesh& mesh) {
         std::ostringstream tbuf;
         for (size_t i = 0; i < mesh.topo.tets.size(); ++i)
             tbuf << "10 ";
+        for (size_t i = 0; i < mesh.topo.tet10s.size(); ++i)
+            tbuf << "24 ";
         for (size_t i = 0; i < mesh.topo.hexes.size(); ++i)
             tbuf << "12 ";
         types.append_child(pugi::node_pcdata).set_value(tbuf.str().c_str());
@@ -470,10 +496,10 @@ inline void WriteVtu(const std::string& filename, const Mesh& mesh) {
         pd.last_child().append_child(pugi::node_pcdata).set_value(obuf.str().c_str());
     }
 
-    // CellData: GlobalCellID, CellRegionTag (aligned: tets then hexes)
+    // CellData: GlobalCellID, CellRegionTag (aligned: tets then tet10s then hexes)
     {
         auto cd = piece.append_child("CellData");
-        const nodeID_t nCells = (nodeID_t)(mesh.topo.tets.size() + mesh.topo.hexes.size());
+        const nodeID_t nCells = (nodeID_t)(mesh.topo.tets.size() + mesh.topo.tet10s.size() + mesh.topo.hexes.size());
 
         // GlobalCellID (optional)
         if (!mesh.localToGlobalCell.empty() && mesh.localToGlobalCell.size() == (size_t)nCells) {
@@ -503,6 +529,14 @@ inline void WriteVtu(const std::string& filename, const Mesh& mesh) {
                 rbuf << v << " ";
         } else {
             for (size_t i = 0; i < mesh.topo.tets.size(); ++i)
+                rbuf << 0 << " ";
+        }
+        // tet10s next
+        if (mesh.topo.tet10Tags.size() == mesh.topo.tet10s.size()) {
+            for (int v : mesh.topo.tet10Tags)
+                rbuf << v << " ";
+        } else {
+            for (size_t i = 0; i < mesh.topo.tet10s.size(); ++i)
                 rbuf << 0 << " ";
         }
         // hexes next

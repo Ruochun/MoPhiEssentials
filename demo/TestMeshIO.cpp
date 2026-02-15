@@ -12,8 +12,8 @@ int main() {
     std::cout << "=== Testing Mesh I/O Functionality ===" << std::endl;
 
     // Try multiple mesh files - beam.vtu is binary (may not be supported yet),
-    // cube_mesh.vtu is ASCII and should work
-    std::vector<std::string> meshFiles = {"../data/beam.vtu", "../data/cube_mesh.vtu"};
+    // cube_mesh.vtu is ASCII and should work, and beam_tet10.vtu tests tet10 support
+    std::vector<std::string> meshFiles = {"../data/beam_tet10.vtu", "../data/beam.vtu"};
 
     std::string loadedMeshPath;
     std::string outputMeshPath = "mesh_output.vtu";  // Use relative path in current directory
@@ -54,6 +54,7 @@ int main() {
     std::cout << "    Number of local nodes: " << mesh.NumLocalNodes() << std::endl;
     std::cout << "    Number of owned cells: " << mesh.NumOwnedCells() << std::endl;
     std::cout << "    Number of owned tets:  " << mesh.NumOwnedTets() << std::endl;
+    std::cout << "    Number of owned tet10s: " << mesh.NumOwnedTet10s() << std::endl;
     std::cout << "    Number of owned hexes: " << mesh.NumOwnedHexes() << std::endl;
     std::cout << "    Part ID: " << mesh.partID << std::endl;
 
@@ -81,6 +82,22 @@ int main() {
             }
         }
         std::cout << "    ✓ All tet connectivity indices are valid" << std::endl;
+    }
+
+    if (mesh.topo.tet10s.size() > 0) {
+        std::cout << "    First tet10 connectivity: [" << mesh.topo.tet10s[0][0] << ", " << mesh.topo.tet10s[0][1]
+                  << ", " << mesh.topo.tet10s[0][2] << ", " << mesh.topo.tet10s[0][3] << ", " << mesh.topo.tet10s[0][4]
+                  << ", " << mesh.topo.tet10s[0][5] << ", " << mesh.topo.tet10s[0][6] << ", " << mesh.topo.tet10s[0][7]
+                  << ", " << mesh.topo.tet10s[0][8] << ", " << mesh.topo.tet10s[0][9] << "]" << std::endl;
+
+        // Verify all node indices are valid (nodeID_t is signed, so check both bounds)
+        for (const auto& tet10 : mesh.topo.tet10s) {
+            for (int i = 0; i < 10; ++i) {
+                assert(tet10[i] >= 0 && tet10[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size()) &&
+                       "Tet10 node index out of bounds");
+            }
+        }
+        std::cout << "    ✓ All tet10 connectivity indices are valid" << std::endl;
     }
 
     if (mesh.topo.hexes.size() > 0) {
@@ -135,6 +152,7 @@ int main() {
     assert(reloadedMesh.NumLocalNodes() == mesh.NumLocalNodes() && "Reloaded mesh node count mismatch");
     assert(reloadedMesh.NumOwnedNodes() == mesh.NumOwnedNodes() && "Reloaded mesh owned node count mismatch");
     assert(reloadedMesh.NumOwnedTets() == mesh.NumOwnedTets() && "Reloaded mesh tet count mismatch");
+    assert(reloadedMesh.NumOwnedTet10s() == mesh.NumOwnedTet10s() && "Reloaded mesh tet10 count mismatch");
     assert(reloadedMesh.NumOwnedHexes() == mesh.NumOwnedHexes() && "Reloaded mesh hex count mismatch");
     assert(reloadedMesh.partID == mesh.partID && "Reloaded mesh part ID mismatch");
 
@@ -154,6 +172,12 @@ int main() {
     for (size_t i = 0; i < mesh.topo.tets.size(); ++i) {
         for (int j = 0; j < 4; ++j) {
             assert(mesh.topo.tets[i][j] == reloadedMesh.topo.tets[i][j] && "Tet connectivity mismatch after reload");
+        }
+    }
+    for (size_t i = 0; i < mesh.topo.tet10s.size(); ++i) {
+        for (int j = 0; j < 10; ++j) {
+            assert(mesh.topo.tet10s[i][j] == reloadedMesh.topo.tet10s[i][j] &&
+                   "Tet10 connectivity mismatch after reload");
         }
     }
     for (size_t i = 0; i < mesh.topo.hexes.size(); ++i) {

@@ -23,9 +23,10 @@ enum class CellType : uint8_t { Tet, Hex };
 struct PartConnectivity {
     // Owned cells of this part (no ghosts here)
     std::vector<std::array<nodeID_t, 4>> tets;
+    std::vector<std::array<nodeID_t, 10>> tet10s;
     std::vector<std::array<nodeID_t, 8>> hexes;
     // Per-element region/BC tags
-    std::vector<meshTag_t> tetTags, hexTags;
+    std::vector<meshTag_t> tetTags, tet10Tags, hexTags;
 };
 
 struct PartGeometry {
@@ -71,8 +72,9 @@ struct Mesh {
     // Local means all that I store, including halo
     uNodeID_t NumLocalNodes() const { return (uNodeID_t)geom.nodes.size(); }
     // Number of geos
-    uNodeID_t NumOwnedCells() const { return (uNodeID_t)(topo.tets.size() + topo.hexes.size()); }
+    uNodeID_t NumOwnedCells() const { return (uNodeID_t)(topo.tets.size() + topo.tet10s.size() + topo.hexes.size()); }
     uNodeID_t NumOwnedTets() const { return topo.tets.size(); }
+    uNodeID_t NumOwnedTet10s() const { return topo.tet10s.size(); }
     uNodeID_t NumOwnedHexes() const { return topo.hexes.size(); }
 };
 
