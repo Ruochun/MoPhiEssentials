@@ -223,8 +223,10 @@ inline Mesh LoadVtu(const std::string& filename) {
         return (nodeIDGlobal_t)cellIndex;
     };
 
-    mesh.localToGlobalCell.clear();
-    mesh.localToGlobalCell.reserve(types.size());
+    // Track cell types to reorganize localToGlobalCell later
+    std::vector<nodeIDGlobal_t> tetGlobalIDs, hexGlobalIDs;
+    tetGlobalIDs.reserve(types.size());
+    hexGlobalIDs.reserve(types.size());
 
     for (size_t i = 0; i < types.size(); ++i) {
         size_t end = (size_t)offsets[i];
@@ -241,7 +243,7 @@ inline Mesh LoadVtu(const std::string& filename) {
                                       connectivity[start + 3]};
             mesh.topo.tets.push_back(v);
             mesh.topo.tetTags.push_back(read_tag(i));
-            mesh.localToGlobalCell.push_back(read_global_cell(i));
+            tetGlobalIDs.push_back(read_global_cell(i));
             tetCount++;
         } else if (cell_type == 12 && nverts == 8) {
             // Linear hexahedron
@@ -250,7 +252,7 @@ inline Mesh LoadVtu(const std::string& filename) {
                                       connectivity[start + 6], connectivity[start + 7]};
             mesh.topo.hexes.push_back(v);
             mesh.topo.hexTags.push_back(read_tag(i));
-            mesh.localToGlobalCell.push_back(read_global_cell(i));
+            hexGlobalIDs.push_back(read_global_cell(i));
             hexCount++;
         } else if (cell_type == 5 /* triangle */ || cell_type == 9 /* quad */ || 
                    cell_type == 3 /* line */ || cell_type == 1 /* vertex */) {
@@ -264,6 +266,12 @@ inline Mesh LoadVtu(const std::string& filename) {
         }
         start = end;
     }
+
+    // Reorganize localToGlobalCell to match output order (tets first, then hexes)
+    mesh.localToGlobalCell.clear();
+    mesh.localToGlobalCell.reserve(tetGlobalIDs.size() + hexGlobalIDs.size());
+    mesh.localToGlobalCell.insert(mesh.localToGlobalCell.end(), tetGlobalIDs.begin(), tetGlobalIDs.end());
+    mesh.localToGlobalCell.insert(mesh.localToGlobalCell.end(), hexGlobalIDs.begin(), hexGlobalIDs.end());
 
     // ---- Node ownership / global IDs / halo maps ----
     mesh.partID = fieldPartID;
