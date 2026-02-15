@@ -12,7 +12,7 @@ int main() {
     std::cout << "=== Testing Mesh I/O Functionality ===" << std::endl;
 
     // Try multiple mesh files - beam.vtu is binary (may not be supported yet),
-    // cube_mesh.vtu is ASCII and should work, beam_tet10.vtu tests tet10 support
+    // cube_mesh.vtu is ASCII and should work, and beam_tet10.vtu tests tet10 support
     std::vector<std::string> meshFiles = {"../data/beam.vtu", "../data/cube_mesh.vtu", "../data/beam_tet10.vtu"};
 
     std::string loadedMeshPath;

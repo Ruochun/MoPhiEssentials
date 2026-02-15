@@ -198,7 +198,7 @@ inline Mesh LoadVtu(const std::string& filename) {
         }
     }
 
-    // ---- Build topology: only Tets(10) & Tet10s(24) & Hexes(12); ignore Triangles(5) ----
+    // ---- Build topology: only Tets (VTK type 10) & Tet10s (VTK type 24) & Hexes (VTK type 12); ignore Triangles (VTK type 5) ----
     size_t start = 0;
     size_t tetCount = 0, tet10Count = 0, hexCount = 0;
     mesh.topo.tets.clear();
