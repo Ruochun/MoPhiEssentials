@@ -83,7 +83,7 @@ int main() {
         // Verify all node indices are valid (nodeID_t is signed, so check both bounds)
         for (const auto& tet : mesh.topo.tets) {
             for (int i = 0; i < 4; ++i) {
-                assert(tet[i] >= 0 && tet[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size()) 
+                assert(tet[i] >= 0 && tet[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size())
                        && "Tet node index out of bounds");
             }
         }
@@ -104,7 +104,7 @@ int main() {
         // Verify all node indices are valid (nodeID_t is signed, so check both bounds)
         for (const auto& hex : mesh.topo.hexes) {
             for (int i = 0; i < 8; ++i) {
-                assert(hex[i] >= 0 && hex[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size()) 
+                assert(hex[i] >= 0 && hex[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size())
                        && "Hex node index out of bounds");
             }
         }
