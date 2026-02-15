@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian">
+  <FieldData>
+    <DataArray type="Int32" Name="PartID" NumberOfTuples="1" format="ascii">0</DataArray>
+    <DataArray type="Int32" Name="NumOwnedNodes" NumberOfTuples="1" format="ascii">20</DataArray>
+  </FieldData>
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="20" NumberOfCells="1">
+      <Points>
+        <DataArray type="Float64" NumberOfComponents="3" format="ascii">
+          0.0 0.0 0.0
+          1.0 0.0 0.0
+          0.0 1.0 0.0
+          0.0 0.0 1.0
+          0.333 0.0 0.0
+          0.667 0.0 0.0
+          0.667 0.333 0.0
+          0.333 0.667 0.0
+          0.0 0.667 0.0
+          0.0 0.333 0.0
+          0.0 0.0 0.333
+          0.0 0.0 0.667
+          0.333 0.0 0.667
+          0.667 0.0 0.333
+          0.667 0.0 0.667
+          0.0 0.333 0.667
+          0.0 0.667 0.333
+          0.333 0.333 0.333
+          0.333 0.333 0.0
+          0.0 0.333 0.333
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int32" Name="connectivity" format="ascii">
+          0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+        </DataArray>
+        <DataArray type="Int32" Name="offsets" format="ascii">
+          20
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="ascii">
+          29
+        </DataArray>
+      </Cells>
+      <PointData>
+        <DataArray type="Int32" Name="GlobalNodeID" format="ascii">
+          0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+        </DataArray>
+        <DataArray type="UInt8" Name="NodeIsOwned" format="ascii">
+          1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+        </DataArray>
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="GlobalCellID" format="ascii" NumberOfTuples="1">
+          0
+        </DataArray>
+        <DataArray type="Int32" Name="CellRegionTag" format="ascii" NumberOfTuples="1">
+          1
+        </DataArray>
+      </CellData>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

@@ -198,7 +198,7 @@ inline Mesh LoadVtu(const std::string& filename) {
         }
     }
 
-    // ---- Build topology: only Tets(10) & Hexes(12); ignore Triangles(5) ----
+    // ---- Build topology: Tets (type 10 tet4, type 24 tet10) & Hexes (type 12); ignore lower-dim elements ----
     size_t start = 0;
     size_t tetCount = 0, hexCount = 0;
     mesh.topo.tets.clear();
@@ -235,6 +235,16 @@ inline Mesh LoadVtu(const std::string& filename) {
         const size_t nverts = end - start;
 
         if (cell_type == 10 && nverts == 4) {
+            // Linear tetrahedron (tet4)
+            std::array<nodeID_t, 4> v{connectivity[start + 0], connectivity[start + 1], connectivity[start + 2],
+                                      connectivity[start + 3]};
+            mesh.topo.tets.push_back(v);
+            mesh.topo.tetTags.push_back(read_tag(i));
+            mesh.localToGlobalCell.push_back(read_global_cell(i));
+            tetCount++;
+        } else if (cell_type == 24 && nverts == 10) {
+            // Quadratic tetrahedron (tet10) - extract corner nodes only
+            // VTK tet10 node ordering: 0-3 are corner nodes, 4-9 are midpoint nodes
             std::array<nodeID_t, 4> v{connectivity[start + 0], connectivity[start + 1], connectivity[start + 2],
                                       connectivity[start + 3]};
             mesh.topo.tets.push_back(v);
@@ -242,6 +252,7 @@ inline Mesh LoadVtu(const std::string& filename) {
             mesh.localToGlobalCell.push_back(read_global_cell(i));
             tetCount++;
         } else if (cell_type == 12 && nverts == 8) {
+            // Linear hexahedron
             std::array<nodeID_t, 8> v{connectivity[start + 0], connectivity[start + 1], connectivity[start + 2],
                                       connectivity[start + 3], connectivity[start + 4], connectivity[start + 5],
                                       connectivity[start + 6], connectivity[start + 7]};
@@ -249,8 +260,14 @@ inline Mesh LoadVtu(const std::string& filename) {
             mesh.topo.hexTags.push_back(read_tag(i));
             mesh.localToGlobalCell.push_back(read_global_cell(i));
             hexCount++;
+        } else if (cell_type == 5 || cell_type == 9 || cell_type == 3 || cell_type == 1) {
+            // Silently ignore lower-dimensional elements (triangles, quads, lines, vertices)
         } else {
-            // Ignore other types (e.g., triangles=5)
+            // Error on unsupported 3D cell types
+            std::ostringstream msg;
+            msg << "Unsupported VTU cell type " << cell_type << " with " << nverts << " vertices at cell index " << i
+                << ". Supported types: tet4 (type=10, nverts=4), tet10 (type=24, nverts=10), hex8 (type=12, nverts=8).";
+            MOPHI_ERROR(msg.str());
         }
         start = end;
     }
