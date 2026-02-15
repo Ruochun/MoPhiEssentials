@@ -13,7 +13,7 @@ int main() {
 
     // Try multiple mesh files - beam.vtu is binary (may not be supported yet),
     // cube_mesh.vtu is ASCII and should work, and beam_tet10.vtu tests tet10 support
-    std::vector<std::string> meshFiles = {"../data/beam.vtu", "../data/cube_mesh.vtu", "../data/beam_tet10.vtu"};
+    std::vector<std::string> meshFiles = {"../data/beam_tet10.vtu", "../data/beam.vtu"};
 
     std::string loadedMeshPath;
     std::string outputMeshPath = "mesh_output.vtu";  // Use relative path in current directory
@@ -86,10 +86,9 @@ int main() {
 
     if (mesh.topo.tet10s.size() > 0) {
         std::cout << "    First tet10 connectivity: [" << mesh.topo.tet10s[0][0] << ", " << mesh.topo.tet10s[0][1]
-                  << ", " << mesh.topo.tet10s[0][2] << ", " << mesh.topo.tet10s[0][3] << ", "
-                  << mesh.topo.tet10s[0][4] << ", " << mesh.topo.tet10s[0][5] << ", " << mesh.topo.tet10s[0][6] << ", "
-                  << mesh.topo.tet10s[0][7] << ", " << mesh.topo.tet10s[0][8] << ", " << mesh.topo.tet10s[0][9] << "]"
-                  << std::endl;
+                  << ", " << mesh.topo.tet10s[0][2] << ", " << mesh.topo.tet10s[0][3] << ", " << mesh.topo.tet10s[0][4]
+                  << ", " << mesh.topo.tet10s[0][5] << ", " << mesh.topo.tet10s[0][6] << ", " << mesh.topo.tet10s[0][7]
+                  << ", " << mesh.topo.tet10s[0][8] << ", " << mesh.topo.tet10s[0][9] << "]" << std::endl;
 
         // Verify all node indices are valid (nodeID_t is signed, so check both bounds)
         for (const auto& tet10 : mesh.topo.tet10s) {
