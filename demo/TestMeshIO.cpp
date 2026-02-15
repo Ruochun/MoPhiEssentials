@@ -13,15 +13,12 @@ int main() {
 
     // Try multiple mesh files - beam.vtu is binary (may not be supported yet),
     // cube_mesh.vtu is ASCII and should work
-    std::vector<std::string> meshFiles = {
-        "../data/beam.vtu",
-        "../data/cube_mesh.vtu"
-    };
-    
+    std::vector<std::string> meshFiles = {"../data/beam.vtu", "../data/cube_mesh.vtu"};
+
     std::string loadedMeshPath;
     std::string outputMeshPath = "mesh_output.vtu";  // Use relative path in current directory
     mophi::Mesh mesh;
-    
+
     // -----------------------------------------------------------------------
     // 1. Load the mesh - try each file until one succeeds
     // -----------------------------------------------------------------------
@@ -37,10 +34,11 @@ int main() {
             break;
         } catch (const std::exception& e) {
             std::cerr << "    WARNING: Could not load " << meshPath << ": " << e.what() << std::endl;
-            std::cerr << "    (This may be expected if the file uses unsupported binary/compressed format)" << std::endl;
+            std::cerr << "    (This may be expected if the file uses unsupported binary/compressed format)"
+                      << std::endl;
         }
     }
-    
+
     if (!loaded) {
         std::cerr << "\nERROR: Could not load any test mesh files!" << std::endl;
         return 1;
@@ -66,58 +64,46 @@ int main() {
 
     // Verify node coordinates are loaded
     if (mesh.geom.nodes.size() > 0) {
-        std::cout << "    First node position: (" 
-                  << mesh.geom.nodes[0].x() << ", "
-                  << mesh.geom.nodes[0].y() << ", "
+        std::cout << "    First node position: (" << mesh.geom.nodes[0].x() << ", " << mesh.geom.nodes[0].y() << ", "
                   << mesh.geom.nodes[0].z() << ")" << std::endl;
     }
 
     // Verify connectivity data
     if (mesh.topo.tets.size() > 0) {
-        std::cout << "    First tet connectivity: ["
-                  << mesh.topo.tets[0][0] << ", "
-                  << mesh.topo.tets[0][1] << ", "
-                  << mesh.topo.tets[0][2] << ", "
-                  << mesh.topo.tets[0][3] << "]" << std::endl;
-        
+        std::cout << "    First tet connectivity: [" << mesh.topo.tets[0][0] << ", " << mesh.topo.tets[0][1] << ", "
+                  << mesh.topo.tets[0][2] << ", " << mesh.topo.tets[0][3] << "]" << std::endl;
+
         // Verify all node indices are valid (nodeID_t is signed, so check both bounds)
         for (const auto& tet : mesh.topo.tets) {
             for (int i = 0; i < 4; ++i) {
-                assert(tet[i] >= 0 && tet[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size())
-                       && "Tet node index out of bounds");
+                assert(tet[i] >= 0 && tet[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size()) &&
+                       "Tet node index out of bounds");
             }
         }
         std::cout << "    ✓ All tet connectivity indices are valid" << std::endl;
     }
 
     if (mesh.topo.hexes.size() > 0) {
-        std::cout << "    First hex connectivity: ["
-                  << mesh.topo.hexes[0][0] << ", "
-                  << mesh.topo.hexes[0][1] << ", "
-                  << mesh.topo.hexes[0][2] << ", "
-                  << mesh.topo.hexes[0][3] << ", "
-                  << mesh.topo.hexes[0][4] << ", "
-                  << mesh.topo.hexes[0][5] << ", "
-                  << mesh.topo.hexes[0][6] << ", "
-                  << mesh.topo.hexes[0][7] << "]" << std::endl;
-        
+        std::cout << "    First hex connectivity: [" << mesh.topo.hexes[0][0] << ", " << mesh.topo.hexes[0][1] << ", "
+                  << mesh.topo.hexes[0][2] << ", " << mesh.topo.hexes[0][3] << ", " << mesh.topo.hexes[0][4] << ", "
+                  << mesh.topo.hexes[0][5] << ", " << mesh.topo.hexes[0][6] << ", " << mesh.topo.hexes[0][7] << "]"
+                  << std::endl;
+
         // Verify all node indices are valid (nodeID_t is signed, so check both bounds)
         for (const auto& hex : mesh.topo.hexes) {
             for (int i = 0; i < 8; ++i) {
-                assert(hex[i] >= 0 && hex[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size())
-                       && "Hex node index out of bounds");
+                assert(hex[i] >= 0 && hex[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size()) &&
+                       "Hex node index out of bounds");
             }
         }
         std::cout << "    ✓ All hex connectivity indices are valid" << std::endl;
     }
 
     // Verify halo data structure
-    std::cout << "    Global to local node map size: " 
-              << mesh.halo.globalToLocalNode.size() << std::endl;
-    std::cout << "    Local to global node vector size: " 
-              << mesh.halo.localToGlobalNode.size() << std::endl;
-    assert(mesh.halo.localToGlobalNode.size() == mesh.geom.nodes.size() 
-           && "Local to global node mapping size mismatch");
+    std::cout << "    Global to local node map size: " << mesh.halo.globalToLocalNode.size() << std::endl;
+    std::cout << "    Local to global node vector size: " << mesh.halo.localToGlobalNode.size() << std::endl;
+    assert(mesh.halo.localToGlobalNode.size() == mesh.geom.nodes.size() &&
+           "Local to global node mapping size mismatch");
     std::cout << "    ✓ Halo data structure is consistent" << std::endl;
 
     // -----------------------------------------------------------------------
@@ -146,16 +132,11 @@ int main() {
     }
 
     // Verify the reloaded mesh matches the original
-    assert(reloadedMesh.NumLocalNodes() == mesh.NumLocalNodes() 
-           && "Reloaded mesh node count mismatch");
-    assert(reloadedMesh.NumOwnedNodes() == mesh.NumOwnedNodes() 
-           && "Reloaded mesh owned node count mismatch");
-    assert(reloadedMesh.NumOwnedTets() == mesh.NumOwnedTets() 
-           && "Reloaded mesh tet count mismatch");
-    assert(reloadedMesh.NumOwnedHexes() == mesh.NumOwnedHexes() 
-           && "Reloaded mesh hex count mismatch");
-    assert(reloadedMesh.partID == mesh.partID 
-           && "Reloaded mesh part ID mismatch");
+    assert(reloadedMesh.NumLocalNodes() == mesh.NumLocalNodes() && "Reloaded mesh node count mismatch");
+    assert(reloadedMesh.NumOwnedNodes() == mesh.NumOwnedNodes() && "Reloaded mesh owned node count mismatch");
+    assert(reloadedMesh.NumOwnedTets() == mesh.NumOwnedTets() && "Reloaded mesh tet count mismatch");
+    assert(reloadedMesh.NumOwnedHexes() == mesh.NumOwnedHexes() && "Reloaded mesh hex count mismatch");
+    assert(reloadedMesh.partID == mesh.partID && "Reloaded mesh part ID mismatch");
 
     std::cout << "    ✓ Reloaded mesh structure matches original" << std::endl;
 
@@ -164,7 +145,7 @@ int main() {
         double dx = mesh.geom.nodes[i].x() - reloadedMesh.geom.nodes[i].x();
         double dy = mesh.geom.nodes[i].y() - reloadedMesh.geom.nodes[i].y();
         double dz = mesh.geom.nodes[i].z() - reloadedMesh.geom.nodes[i].z();
-        double dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+        double dist = std::sqrt(dx * dx + dy * dy + dz * dz);
         assert(dist < 1e-10 && "Node coordinate mismatch after reload");
     }
     std::cout << "    ✓ Node coordinates match" << std::endl;
@@ -172,14 +153,12 @@ int main() {
     // Verify connectivity matches
     for (size_t i = 0; i < mesh.topo.tets.size(); ++i) {
         for (int j = 0; j < 4; ++j) {
-            assert(mesh.topo.tets[i][j] == reloadedMesh.topo.tets[i][j] 
-                   && "Tet connectivity mismatch after reload");
+            assert(mesh.topo.tets[i][j] == reloadedMesh.topo.tets[i][j] && "Tet connectivity mismatch after reload");
         }
     }
     for (size_t i = 0; i < mesh.topo.hexes.size(); ++i) {
         for (int j = 0; j < 8; ++j) {
-            assert(mesh.topo.hexes[i][j] == reloadedMesh.topo.hexes[i][j] 
-                   && "Hex connectivity mismatch after reload");
+            assert(mesh.topo.hexes[i][j] == reloadedMesh.topo.hexes[i][j] && "Hex connectivity mismatch after reload");
         }
     }
     std::cout << "    ✓ Connectivity data matches" << std::endl;
