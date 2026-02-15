@@ -97,11 +97,7 @@ class Logger : private NonCopyable, public Singleton<Logger> {
     }
 
     // LogStatus without format arguments (avoids -Wformat-security warning)
-    void LogStatusf(const std::string& identifier,
-                    const char* func,
-                    const char* file,
-                    int line,
-                    const char* message) {
+    void LogStatusf(const std::string& identifier, const char* func, const char* file, int line, const char* message) {
         LogStatus(identifier, func, std::string(message), file, line);
     }
 
