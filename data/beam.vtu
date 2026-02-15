@@ -7,8 +7,17 @@
       <CellData>
       </CellData>
       <Points>
-        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="10.099504938362077">
-          AQAAAACAAADgAQAASAAAAA==eF6FjLERACAIxCgcwdrKPWD/aRjB6pscYDrDG7OJG7NPr++d5519er3Zo99hJfL8zz077C94IS+6PT05H88OPfci/QGGbB0V
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="ascii" RangeMin="0" RangeMax="10.099504938362077">
+          0 0 0 10 0 0
+          10 1 0 0 1 0
+          0 0 1 10 0 1
+          10 1 1 0 1 1
+          5 0 0 5 1 0
+          5 0 1 5 1 1
+          2.5 1 0 2.5 0 1
+          2.5 1 1 2.5 0 0
+          7.5 0 0 7.5 1 1
+          7.5 1 0 7.5 0 1
           <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
             <Value index="0">
               0
@@ -20,14 +29,35 @@
         </DataArray>
       </Points>
       <Cells>
-        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="19">
-          AQAAAACAAAAAAwAAiQAAAA==eF51kjcOgEAQA8k58/+/UuApGAk31m3wpmuKF1t4Lb4YwmN4Dp96T4rHX4Zv2Q/5L/mrMLr0hz59tuEujB46TZh80Idr+bED12de+qAu/bo+eyN/CZPPGzCX5yXOfvcPiHd99JgDWH+X3XvHj933+7svduLI9/9g7/4/3Nv56DPvn77rP5b7A/U=
+        <DataArray type="Int64" Name="connectivity" format="ascii" RangeMin="0" RangeMax="19">
+          4 14 13 0 8 9
+          11 17 11 10 8 17
+          1 19 17 16 1 18
+          17 2 10 14 8 13
+          5 6 1 17 4 14
+          0 7 3 14 7 0
+          10 14 11 8 6 2
+          1 17 9 14 12 8
+          12 0 13 14 8 12
+          13 14 3 14 0 12
+          9 14 8 11 0 12
+          13 15 12 8 13 15
+          8 18 17 16 1 18
+          16 17 8 19 17 10
+          1 19 5 17 8 18
+          9 17 8 19 16 17
         </DataArray>
-        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="4" RangeMax="96">
-          AQAAAACAAADAAAAARAAAAA==eF4txRECgDAAAMBgEAyCIAiCIAiCIBgEQTAYBEHQ/18RdCcXql/t6MatO/cePHry7MWrNyfvPnw6u/jy7cevP0XPBLE=
+        <DataArray type="Int64" Name="offsets" format="ascii" RangeMin="4" RangeMax="96">
+          4 8 12 16 20 24
+          28 32 36 40 44 48
+          52 56 60 64 68 72
+          76 80 84 88 92 96
         </DataArray>
-        <DataArray type="UInt8" Name="types" format="binary" RangeMin="10" RangeMax="10">
-          AQAAAACAAAAYAAAACwAAAA==eF7j4sIOAAvQAPE=
+        <DataArray type="UInt8" Name="types" format="ascii" RangeMin="10" RangeMax="10">
+          10 10 10 10 10 10
+          10 10 10 10 10 10
+          10 10 10 10 10 10
+          10 10 10 10 10 10
         </DataArray>
       </Cells>
     </Piece>
