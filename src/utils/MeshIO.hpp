@@ -234,17 +234,9 @@ inline Mesh LoadVtu(const std::string& filename) {
         int cell_type = types[i];
         const size_t nverts = end - start;
 
-        if (cell_type == 10 && nverts == 4) {
-            // Linear tetrahedron (tet4)
-            std::array<nodeID_t, 4> v{connectivity[start + 0], connectivity[start + 1], connectivity[start + 2],
-                                      connectivity[start + 3]};
-            mesh.topo.tets.push_back(v);
-            mesh.topo.tetTags.push_back(read_tag(i));
-            mesh.localToGlobalCell.push_back(read_global_cell(i));
-            tetCount++;
-        } else if (cell_type == 24 && nverts == 10) {
-            // Quadratic tetrahedron (tet10) - extract corner nodes only
-            // VTK tet10 node ordering: 0-3 are corner nodes, 4-9 are midpoint nodes
+        if ((cell_type == 10 && nverts == 4) || (cell_type == 24 && nverts == 10)) {
+            // Linear tetrahedron (tet4) or Quadratic tetrahedron (tet10)
+            // For tet10: extract corner nodes only (VTK ordering: 0-3 are corners, 4-9 are midpoints)
             std::array<nodeID_t, 4> v{connectivity[start + 0], connectivity[start + 1], connectivity[start + 2],
                                       connectivity[start + 3]};
             mesh.topo.tets.push_back(v);
