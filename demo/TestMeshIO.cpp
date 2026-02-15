@@ -19,7 +19,7 @@ int main() {
     };
     
     std::string loadedMeshPath;
-    std::string outputMeshPath = "/tmp/mesh_output.vtu";
+    std::string outputMeshPath = "mesh_output.vtu";  // Use relative path in current directory
     mophi::Mesh mesh;
     
     // -----------------------------------------------------------------------
@@ -80,10 +80,10 @@ int main() {
                   << mesh.topo.tets[0][2] << ", "
                   << mesh.topo.tets[0][3] << "]" << std::endl;
         
-        // Verify all node indices are valid
+        // Verify all node indices are valid (nodeID_t is signed, so check both bounds)
         for (const auto& tet : mesh.topo.tets) {
             for (int i = 0; i < 4; ++i) {
-                assert(tet[i] >= 0 && tet[i] < (mophi::nodeID_t)mesh.geom.nodes.size() 
+                assert(tet[i] >= 0 && tet[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size()) 
                        && "Tet node index out of bounds");
             }
         }
@@ -101,10 +101,10 @@ int main() {
                   << mesh.topo.hexes[0][6] << ", "
                   << mesh.topo.hexes[0][7] << "]" << std::endl;
         
-        // Verify all node indices are valid
+        // Verify all node indices are valid (nodeID_t is signed, so check both bounds)
         for (const auto& hex : mesh.topo.hexes) {
             for (int i = 0; i < 8; ++i) {
-                assert(hex[i] >= 0 && hex[i] < (mophi::nodeID_t)mesh.geom.nodes.size() 
+                assert(hex[i] >= 0 && hex[i] < static_cast<mophi::nodeID_t>(mesh.geom.nodes.size()) 
                        && "Hex node index out of bounds");
             }
         }
