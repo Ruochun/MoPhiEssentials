@@ -4,6 +4,8 @@
 #ifndef MOPHI_MANAGED_MEM_H
 #define MOPHI_MANAGED_MEM_H
 
+#ifdef MOPHI_USE_CUDA
+
 #include <vector>
 
 #include "CudaAllocator.hpp"
@@ -88,5 +90,7 @@ void advise(const std::vector<T>& data, ManagedAdvice advice, int device) {
 }
 
 }  // END namespace mophi
+
+#endif  // MOPHI_USE_CUDA
 
 #endif

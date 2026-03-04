@@ -153,12 +153,14 @@ std::vector<T1> GenerateRepeatingPattern(size_t n, const std::vector<T1>& m, siz
     return result;
 }
 
+#ifdef MOPHI_USE_CUDA
 template <typename T1>
 inline std::vector<T1> GetDeviceArray(T1* arr, size_t n = 1) {
     std::vector<T1> tmp(n);
     MOPHI_GPU_CALL(cudaMemcpy(tmp.data(), arr, n * sizeof(T1), cudaMemcpyDeviceToHost));
     return tmp;
 }
+#endif  // MOPHI_USE_CUDA
 
 template <typename T1>
 inline std::string GetArrayAsString(const std::vector<T1>& arr) {
@@ -186,12 +188,14 @@ inline void DisplayArray(T1* arr, size_t n = 1) {
 }
 
 // An extremely inefficient device vector view function
+#ifdef MOPHI_USE_CUDA
 template <typename T1>
 inline void DisplayDeviceArray(T1* arr, size_t n = 1) {
     std::vector<T1> tmp = GetDeviceArray(arr, n);
     std::cout << GetArrayAsString(tmp);
     std::cout << std::endl;
 }
+#endif  // MOPHI_USE_CUDA
 
 template <typename T1>
 inline T1 vector_sum(const std::vector<T1>& vect) {
@@ -199,6 +203,7 @@ inline T1 vector_sum(const std::vector<T1>& vect) {
     return sum_of_elems;
 }
 
+#ifdef MOPHI_USE_CUDA
 inline bool isBetween(const float3& coord, const float3& L, const float3& U) {
     if (coord.x < L.x || coord.y < L.y || coord.z < L.z) {
         return false;
@@ -208,6 +213,7 @@ inline bool isBetween(const float3& coord, const float3& L, const float3& U) {
     }
     return true;
 }
+#endif  // MOPHI_USE_CUDA
 
 template <typename T>
 inline bool isBetween(const T& x, const T& L, const T& U) {
@@ -387,6 +393,7 @@ inline std::string compact_code(const std::string& prgm) {
 }
 
 /// Get a quaternion from axis and angle
+#ifdef MOPHI_USE_CUDA
 inline float4 QuatFromAxisAngle(const float3& axis, const float& theta) {
     float4 Q;
     Q.x = axis.x * sin(theta / 2);
@@ -413,6 +420,7 @@ inline float4 RotateQuat(const float4& quat, const float3& axis, const float& th
     // Apply
     return hostHamiltonProduct(rot, quat);
 }
+#endif  // MOPHI_USE_CUDA
 
 /// Rotate a vector about an unit axis by an angle
 template <typename T>

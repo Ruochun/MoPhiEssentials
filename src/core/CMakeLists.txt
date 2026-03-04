@@ -13,10 +13,12 @@ target_include_directories(
     PUBLIC $<BUILD_INTERFACE:${ProjectIncludeGenerated}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-target_link_libraries(
-    moCore
-    PUBLIC CUB::CUB
-)
+if(MOPHI_CUDA_AVAILABLE)
+    target_link_libraries(
+        moCore
+        PUBLIC CUB::CUB
+    )
+endif()
 
 set(core_headers
     ${CMAKE_CURRENT_SOURCE_DIR}/ApiVersion.h
@@ -32,9 +34,16 @@ set(core_headers
     ${CMAKE_CURRENT_SOURCE_DIR}/Real3.hpp
 )
 
-set(core_sources
-    ${CMAKE_CURRENT_SOURCE_DIR}/GpuManager.cpp
-)
+if(MOPHI_CUDA_AVAILABLE)
+    set(core_sources
+        ${CMAKE_CURRENT_SOURCE_DIR}/GpuManager.cpp
+    )
+else()
+    # In CPU-only mode, use a stub to satisfy the OBJECT library source requirement
+    set(core_sources
+        ${CMAKE_CURRENT_SOURCE_DIR}/CpuOnlyStub.cpp
+    )
+endif()
 
 target_sources(
     moCore

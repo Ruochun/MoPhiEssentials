@@ -6,6 +6,8 @@
 #ifndef MOPHI_GPU_MANAGER_H
 #define MOPHI_GPU_MANAGER_H
 
+#ifdef MOPHI_USE_CUDA
+
 #include <cuda_runtime_api.h>
 #include <vector>
 #include <mutex>
@@ -59,5 +61,7 @@ class GpuManager {
 };
 
 }  // namespace mophi
+
+#endif  // MOPHI_USE_CUDA
 
 #endif

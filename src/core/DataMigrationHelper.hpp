@@ -14,6 +14,8 @@
 
 namespace mophi {
 
+#ifdef MOPHI_USE_CUDA
+
 // A to-device memcpy wrapper
 template <typename T>
 void cuda_copy_to_device(T* pD, T* pH) {
@@ -630,6 +632,8 @@ class DeviceArray : private NonCopyable {
 
     void update_mem_counter(ssize_t delta) { m_mem_counter += delta; }
 };
+
+#endif  // MOPHI_USE_CUDA
 
 }  // namespace mophi
 

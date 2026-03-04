@@ -4,6 +4,8 @@
 #ifndef CUDALLOC_HPP
 #define CUDALLOC_HPP
 
+#ifdef MOPHI_USE_CUDA
+
 #include <core/ApiVersion.h>
 
 #include <cuda_runtime_api.h>
@@ -267,5 +269,7 @@ struct PinnedAllocator {
 };
 
 }  // namespace mophi
+
+#endif  // MOPHI_USE_CUDA
 
 #endif
