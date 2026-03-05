@@ -69,23 +69,24 @@ inline void host_ptr_alloc(T*& ptr, size_t size) {
     MOPHI_GPU_CALL(cudaMallocHost((void**)&ptr, size * sizeof(T)));
 }
 
-// Managed advise doesn't seem to do anything...
-#define MOPHI_ADVISE_DEVICE(vec, device) \
-    { advise(vec, ManagedAdvice::PREFERRED_LOC, device); }
-#define MOPHI_MIGRATE_TO_DEVICE(vec, device, stream) \
-    { migrate(vec, device, stream); }
+    // Managed advise doesn't seem to do anything...
+    #define MOPHI_ADVISE_DEVICE(vec, device) \
+        { advise(vec, ManagedAdvice::PREFERRED_LOC, device); }
+    #define MOPHI_MIGRATE_TO_DEVICE(vec, device, stream) \
+        { migrate(vec, device, stream); }
 
-// MOPHI_DUAL_ARRAY_RESIZE is a reminder for developers that a work array is resized, and this may automatically change
-// the external device pointer this array's bound to. Therefore, after this call, syncing the data pointer bundle
-// (granData) to device may be needed, and you remember to cudaSetDevice beforehand so it allocates to correct places.
-#define MOPHI_DUAL_ARRAY_RESIZE(vec, newsize, val) \
-    { vec.resize(newsize, val); }
-#define MOPHI_DUAL_ARRAY_RESIZE_NOVAL(vec, newsize) \
-    { vec.resize(newsize); }
+    // MOPHI_DUAL_ARRAY_RESIZE is a reminder for developers that a work array is resized, and this may automatically
+    // change the external device pointer this array's bound to. Therefore, after this call, syncing the data pointer
+    // bundle (granData) to device may be needed, and you remember to cudaSetDevice beforehand so it allocates to
+    // correct places.
+    #define MOPHI_DUAL_ARRAY_RESIZE(vec, newsize, val) \
+        { vec.resize(newsize, val); }
+    #define MOPHI_DUAL_ARRAY_RESIZE_NOVAL(vec, newsize) \
+        { vec.resize(newsize); }
 
-// Simply a reminder that this is a device array resize, to distinguish from some general .resize calls
-#define MOPHI_DEVICE_ARRAY_RESIZE(vec, newsize) \
-    { vec.resize(newsize); }
+    // Simply a reminder that this is a device array resize, to distinguish from some general .resize calls
+    #define MOPHI_DEVICE_ARRAY_RESIZE(vec, newsize) \
+        { vec.resize(newsize); }
 
 // Use (void) to silence unused warnings.
 // #define assertm(exp, msg) assert(((void)msg, exp))

@@ -171,12 +171,12 @@ class DeferredHandle {
 // =============================================================================
 
 #ifdef MOPHI_USE_CUDA
-// Jitify options include suppressing variable-not-used warnings. We could use CUDA lib functions too.
-#define MOPHI_JITIFY_DEFAULT_OPTIONS                                                                   \
-    {                                                                                                  \
-        "-I" + (JitHelper::KERNEL_INCLUDE_DIR).string(), "-I" + (JitHelper::KERNEL_DIR).string(),      \
-            "-I" + std::string(MOPHI_CUDA_TOOLKIT_HEADERS), "-diag-suppress=550", "-diag-suppress=177" \
-    }
+    // Jitify options include suppressing variable-not-used warnings. We could use CUDA lib functions too.
+    #define MOPHI_JITIFY_DEFAULT_OPTIONS                                                                   \
+        {                                                                                                  \
+            "-I" + (JitHelper::KERNEL_INCLUDE_DIR).string(), "-I" + (JitHelper::KERNEL_DIR).string(),      \
+                "-I" + std::string(MOPHI_CUDA_TOOLKIT_HEADERS), "-diag-suppress=550", "-diag-suppress=177" \
+        }
 #endif  // MOPHI_USE_CUDA
 
 }  // namespace mophi

@@ -8,9 +8,9 @@
 
 #ifdef MOPHI_USE_CUDA
 
-#include <cuda_runtime_api.h>
-#include <vector>
-#include <mutex>
+    #include <cuda_runtime_api.h>
+    #include <vector>
+    #include <mutex>
 
 namespace mophi {
 

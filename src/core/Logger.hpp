@@ -237,21 +237,21 @@ class Logger : private NonCopyable, public Singleton<Logger> {
     mophi::Logger::GetInstance().LogStatusf(identifier, __func__, __FILE__, __LINE__, __VA_ARGS__)
 
 #ifdef MOPHI_USE_CUDA
-#define MOPHI_GPU_CALL(code)                                       \
-    {                                                              \
-        cudaError_t res = (code);                                  \
-        if (res != cudaSuccess) {                                  \
-            MOPHI_ERROR("GPU Error: %s", cudaGetErrorString(res)); \
-        }                                                          \
-    }
+    #define MOPHI_GPU_CALL(code)                                       \
+        {                                                              \
+            cudaError_t res = (code);                                  \
+            if (res != cudaSuccess) {                                  \
+                MOPHI_ERROR("GPU Error: %s", cudaGetErrorString(res)); \
+            }                                                          \
+        }
 
-#define MOPHI_GPU_CALL_NOTHROW(code)                                       \
-    {                                                                      \
-        cudaError_t res = (code);                                          \
-        if (res != cudaSuccess) {                                          \
-            MOPHI_ERROR_NOTHROW("GPU Error: %s", cudaGetErrorString(res)); \
-        }                                                                  \
-    }
+    #define MOPHI_GPU_CALL_NOTHROW(code)                                       \
+        {                                                                      \
+            cudaError_t res = (code);                                          \
+            if (res != cudaSuccess) {                                          \
+                MOPHI_ERROR_NOTHROW("GPU Error: %s", cudaGetErrorString(res)); \
+            }                                                                  \
+        }
 #endif  // MOPHI_USE_CUDA
 
 inline std::string pretty_format_bytes(size_t bytes) {

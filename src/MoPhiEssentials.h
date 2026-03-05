@@ -55,8 +55,8 @@
 // Memory Management
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
-#include "core/CudaAllocator.hpp"
-#include "core/ManagedMemory.hpp"
+    #include "core/CudaAllocator.hpp"
+    #include "core/ManagedMemory.hpp"
 #endif
 
 // ============================================================================
@@ -68,7 +68,7 @@
 // Data Classes and Migration
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
-#include "core/DataMigrationHelper.hpp"
+    #include "core/DataMigrationHelper.hpp"
 #endif
 #include "core/DataClasses.hpp"
 
@@ -76,7 +76,7 @@
 // GPU Management and Threading
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
-#include "core/GpuManager.h"
+    #include "core/GpuManager.h"
 #endif
 #include "core/ThreadManager.hpp"
 
@@ -91,7 +91,7 @@
 // Static Device Subroutines
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
-#include "algorithms/StaticDeviceSubroutines.h"
+    #include "algorithms/StaticDeviceSubroutines.h"
 #endif
 
 // ============================================================================
