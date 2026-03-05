@@ -12,9 +12,16 @@ set(MOPHI_ESSENTIALS_VERSION_MAJOR 1)
 set(MOPHI_ESSENTIALS_VERSION_MINOR 0)
 
 # ---------------------------------------------------------------------------- #
-# Detect optional CUDA support before declaring the project
+# Declare the project with CXX first, then probe for CUDA
 # ---------------------------------------------------------------------------- #
 
+project(
+    MoPhiEssentials
+    VERSION ${MOPHI_ESSENTIALS_VERSION_MAJOR}.${MOPHI_ESSENTIALS_VERSION_MINOR}
+    LANGUAGES CXX
+)
+
+# check_language(CUDA) requires an active project (CXX) to work correctly.
 include(CheckLanguage)
 check_language(CUDA)
 
@@ -28,19 +35,10 @@ endif()
 option(MOPHI_ENABLE_CUDA "Enable CUDA/GPU support" ${MOPHI_ENABLE_CUDA_DEFAULT})
 
 if(CMAKE_CUDA_COMPILER AND MOPHI_ENABLE_CUDA)
-    project(
-        MoPhiEssentials
-        VERSION ${MOPHI_ESSENTIALS_VERSION_MAJOR}.${MOPHI_ESSENTIALS_VERSION_MINOR}
-        LANGUAGES CXX CUDA
-    )
+    enable_language(CUDA)
     set(MOPHI_CUDA_AVAILABLE TRUE)
     message(STATUS "CUDA found and enabled: GPU support enabled")
 else()
-    project(
-        MoPhiEssentials
-        VERSION ${MOPHI_ESSENTIALS_VERSION_MAJOR}.${MOPHI_ESSENTIALS_VERSION_MINOR}
-        LANGUAGES CXX
-    )
     set(MOPHI_CUDA_AVAILABLE FALSE)
     if(CMAKE_CUDA_COMPILER AND NOT MOPHI_ENABLE_CUDA)
         message(STATUS "CUDA disabled via MOPHI_ENABLE_CUDA=OFF: building in CPU-only mode")
