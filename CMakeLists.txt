@@ -55,6 +55,12 @@ endif()
 
 add_compile_definitions(MOPHI_ESSENTIALS_BUILD)
 
+if(MOPHI_CUDA_AVAILABLE)
+    # Define MOPHI_USE_CUDA globally so all sub-targets (moCore, moAlgorithms,
+    # demos) see it during compilation, not just the final mophi_essentials target.
+    add_compile_definitions(MOPHI_USE_CUDA)
+endif()
+
 # ---------------------------------------------------------------------------- #
 # Additional Packages
 # ---------------------------------------------------------------------------- #
