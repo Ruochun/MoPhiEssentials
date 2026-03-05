@@ -18,6 +18,7 @@ SET(CPU_DEMOS
     TestMsg.cpp
     TestUnifiedHeader.cpp
     TestMeshIO.cpp
+    TestContainersCpu.cpp
 )
 
 SET(GPU_DEMOS

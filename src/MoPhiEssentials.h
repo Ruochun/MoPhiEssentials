@@ -69,8 +69,10 @@
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
     #include "core/DataMigrationHelper.hpp"
+    #include "core/DataClassesCuda.hpp"
 #endif
-#include "core/DataClasses.hpp"
+#include "core/DataContainerBase.hpp"
+#include "core/DataClassesCpu.hpp"
 
 // ============================================================================
 // GPU Management and Threading
