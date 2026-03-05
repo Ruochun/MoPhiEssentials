@@ -12,6 +12,13 @@
 
 namespace mophi {
 
+// MoPhiScratchData mainly contains space allocated as system scratch pad and as thread temporary arrays
+class MoPhiScratchData {
+  private:
+  public:
+    char* allocateScratchSpace(size_t size) { return nullptr; }
+};
+
 // Functor type for selecting values less than some criteria
 template <typename T>
 struct CubEqualTo {

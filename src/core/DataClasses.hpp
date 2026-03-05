@@ -272,13 +272,6 @@ class DeviceArrayRotatingPool : public RotatingDataContainer {
 };
 #endif  // MOPHI_USE_CUDA
 
-// MoPhiScratchData mainly contains space allocated as system scratch pad and as thread temporary arrays
-class MoPhiScratchData {
-  private:
-  public:
-    char* allocateScratchSpace(size_t size) { return nullptr; }
-};
-
 }  // namespace mophi
 
 #endif
