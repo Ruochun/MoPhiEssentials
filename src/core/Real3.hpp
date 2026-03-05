@@ -24,7 +24,9 @@
 #include <cmath>
 #include <ostream>
 #include <limits>
-#include <cuda_runtime_api.h>
+#ifdef MOPHI_USE_CUDA
+    #include <cuda_runtime_api.h>
+#endif
 
 #ifndef MOPHI_HD
     #ifdef __CUDACC__

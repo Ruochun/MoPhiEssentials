@@ -54,8 +54,10 @@
 // ============================================================================
 // Memory Management
 // ============================================================================
-#include "core/CudaAllocator.hpp"
-#include "core/ManagedMemory.hpp"
+#ifdef MOPHI_USE_CUDA
+    #include "core/CudaAllocator.hpp"
+    #include "core/ManagedMemory.hpp"
+#endif
 
 // ============================================================================
 // Logging and Error Handling
@@ -65,13 +67,17 @@
 // ============================================================================
 // Data Classes and Migration
 // ============================================================================
-#include "core/DataMigrationHelper.hpp"
+#ifdef MOPHI_USE_CUDA
+    #include "core/DataMigrationHelper.hpp"
+#endif
 #include "core/DataClasses.hpp"
 
 // ============================================================================
 // GPU Management and Threading
 // ============================================================================
-#include "core/GpuManager.h"
+#ifdef MOPHI_USE_CUDA
+    #include "core/GpuManager.h"
+#endif
 #include "core/ThreadManager.hpp"
 
 // ============================================================================
@@ -84,7 +90,9 @@
 // ============================================================================
 // Static Device Subroutines
 // ============================================================================
-#include "algorithms/StaticDeviceSubroutines.h"
+#ifdef MOPHI_USE_CUDA
+    #include "algorithms/StaticDeviceSubroutines.h"
+#endif
 
 // ============================================================================
 // High-Level Utilities

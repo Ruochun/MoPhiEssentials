@@ -10,7 +10,9 @@
 
 #include <common/VariableTypes.hpp>
 #include <core/Real3.hpp>
-#include "cuda_runtime.h"
+#ifdef MOPHI_USE_CUDA
+    #include "cuda_runtime.h"
+#endif
 
 namespace mophi {
 

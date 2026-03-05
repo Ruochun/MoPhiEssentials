@@ -24,6 +24,8 @@ namespace mophi {
 // this project.
 // ========================================================================
 
+#ifdef MOPHI_USE_CUDA
+
 ////////////////////////////////////////////////////////////////////////////////
 // Dynamics thread kernels
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,6 +46,9 @@ void launch_laplace_assemble(const TetTopo* tets,
                              COOScatterView<uNodeID_t, storeData_t> out,
                              size_t n,
                              cudaStream_t& stream);
+
+#endif  // MOPHI_USE_CUDA
+
 }  // namespace mophi
 
 #endif

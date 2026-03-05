@@ -4,9 +4,11 @@
 #ifndef MOPHI_MANAGED_MEM_H
 #define MOPHI_MANAGED_MEM_H
 
-#include <vector>
+#ifdef MOPHI_USE_CUDA
 
-#include "CudaAllocator.hpp"
+    #include <vector>
+
+    #include "CudaAllocator.hpp"
 
 // Convenience functions to help with Managed Memory (allocated using ManagedAllocator, typically)
 namespace mophi {
@@ -88,5 +90,7 @@ void advise(const std::vector<T>& data, ManagedAdvice advice, int device) {
 }
 
 }  // END namespace mophi
+
+#endif  // MOPHI_USE_CUDA
 
 #endif

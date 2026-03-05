@@ -9,6 +9,7 @@ build*
 .cache/
 output/*
 post/*
+*.vtu
 
 # Python
 __pycache__/

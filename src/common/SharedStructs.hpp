@@ -5,8 +5,10 @@
 #define MOPHI_SHARED_STRUCTS_HPP
 
 #include <core/DataClasses.hpp>
-#include <core/CudaAllocator.hpp>
-#include <core/ManagedMemory.hpp>
+#ifdef MOPHI_USE_CUDA
+    #include <core/CudaAllocator.hpp>
+    #include <core/ManagedMemory.hpp>
+#endif
 #include <core/Logger.hpp>
 #include <core/DataMigrationHelper.hpp>
 #include <core/Real3.hpp>
@@ -69,6 +71,7 @@ struct SolverPolicies {
     bool typicalNS = false;  ///< Whether to create u, p function spaces automatically
 };
 
+#ifdef MOPHI_USE_CUDA
 // The information that is shared between the main thread and the worker threads. The main thread keeps a copy, the
 // workers keep a const reference to it.
 class SharedContext {
@@ -77,6 +80,7 @@ class SharedContext {
     DualStruct<DomainInfo> domainInfo = DualStruct<DomainInfo>(DomainInfo{});
     SolverPolicies policies = SolverPolicies{};
 };
+#endif  // MOPHI_USE_CUDA
 
 // Pre-sized scatter: kernels compute a base offset per element and write without atomics
 template <typename Index, typename T>
@@ -85,11 +89,13 @@ struct COOScatterView {
     Index* col = nullptr;
     T* val = nullptr;
 
+#ifdef MOPHI_USE_CUDA
     __device__ inline void Write(size_t ofs, Index r, Index c, T v) {
         row[ofs] = r;
         col[ofs] = c;
         val[ofs] = v;
     }
+#endif  // MOPHI_USE_CUDA
 };
 
 // A parition (correspond to a dT)
@@ -164,12 +170,14 @@ class DeferredHandle {
 // NOW DEFINING MACRO COMMANDS USED BY THE DEM MODULE
 // =============================================================================
 
-// Jitify options include suppressing variable-not-used warnings. We could use CUDA lib functions too.
-#define MOPHI_JITIFY_DEFAULT_OPTIONS                                                                   \
-    {                                                                                                  \
-        "-I" + (JitHelper::KERNEL_INCLUDE_DIR).string(), "-I" + (JitHelper::KERNEL_DIR).string(),      \
-            "-I" + std::string(MOPHI_CUDA_TOOLKIT_HEADERS), "-diag-suppress=550", "-diag-suppress=177" \
-    }
+#ifdef MOPHI_USE_CUDA
+    // Jitify options include suppressing variable-not-used warnings. We could use CUDA lib functions too.
+    #define MOPHI_JITIFY_DEFAULT_OPTIONS                                                                   \
+        {                                                                                                  \
+            "-I" + (JitHelper::KERNEL_INCLUDE_DIR).string(), "-I" + (JitHelper::KERNEL_DIR).string(),      \
+                "-I" + std::string(MOPHI_CUDA_TOOLKIT_HEADERS), "-diag-suppress=550", "-diag-suppress=177" \
+        }
+#endif  // MOPHI_USE_CUDA
 
 }  // namespace mophi
 

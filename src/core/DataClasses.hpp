@@ -104,6 +104,7 @@ class DataContainer {
     std::unordered_map<std::string, Meta> meta_;
 };
 
+#ifdef MOPHI_USE_CUDA
 // Stores DualArray<T> objects, which are arrays that are pinned to host memory and have a device counterpart
 class DualArrayContainer : public DataContainer {
   public:
@@ -269,6 +270,7 @@ class DeviceArrayRotatingPool : public RotatingDataContainer {
 
     float reuse_threshold_ = 0.5f;  // Threshold for reusing existing arrays
 };
+#endif  // MOPHI_USE_CUDA
 
 // MoPhiScratchData mainly contains space allocated as system scratch pad and as thread temporary arrays
 class MoPhiScratchData {
