@@ -32,6 +32,7 @@ set(core_headers
     ${CMAKE_CURRENT_SOURCE_DIR}/DataMigrationHelper.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DataClasses.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Real3.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Quaternion.hpp
 )
 
 if(MOPHI_CUDA_AVAILABLE)
