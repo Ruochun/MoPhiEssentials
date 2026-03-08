@@ -176,6 +176,11 @@ class Quaternion {
     /// Rotate a 3D vector by the inverse of this quaternion
     MOPHI_HD mophi::Real3<Real> RotateInverse(const mophi::Real3<Real>& v) const { return Conjugate().Rotate(v); }
 
+    /// Apply this quaternion's rotation to another quaternion (left-compose): result = (*this) * q
+    /// This is the quaternion equivalent of rotating a frame orientation represented as q.
+    /// Equivalent to what was formerly the standalone RotateQuat() helper.
+    MOPHI_HD Quaternion Rotate(const Quaternion& q) const { return (*this) * q; }
+
     // =========================================================================
     // Conversion: axis-angle
     // =========================================================================

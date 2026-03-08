@@ -17,7 +17,8 @@ SET(CPU_DEMOS
     HelloWorld.cpp
     TestMsg.cpp
     TestUnifiedHeader.cpp
-    TestMeshIO.cpp
+    TestMesh.cpp
+    TestQuaternion.cpp
     TestContainersCpu.cpp
 )
 
