@@ -9,6 +9,7 @@
 #include <common/SharedStructs.hpp>
 #include <core/DataClasses.hpp>
 #include <core/Real3.hpp>
+#include <core/Quaternion.hpp>
 #include <kernels/Compression.cuh>
 
 namespace mophi {
@@ -76,6 +77,62 @@ struct Mesh {
     uNodeID_t NumOwnedTets() const { return topo.tets.size(); }
     uNodeID_t NumOwnedTet10s() const { return topo.tet10s.size(); }
     uNodeID_t NumOwnedHexes() const { return topo.hexes.size(); }
+
+    // =========================================================================
+    // Geometric transformation utilities
+    // =========================================================================
+
+    /// Translate all nodes by the given offset vector.
+    void Translate(const Real3d& offset) {
+        for (auto& n : geom.nodes)
+            n = n + offset;
+    }
+
+    /// Rotate all nodes about the origin using the given quaternion.
+    /// @param q Unit quaternion representing the desired rotation.  Passing a
+    ///          non-unit quaternion will scale the result and produce incorrect
+    ///          geometry; normalize @p q before calling if necessary.
+    void Rotate(const Quatd& q) {
+        for (auto& n : geom.nodes)
+            n = q.Rotate(n);
+    }
+
+    /// Rotate all nodes about the origin and then translate by offset.
+    /// @param q Unit quaternion representing the desired rotation.  Passing a
+    ///          non-unit quaternion will produce incorrect geometry; normalize
+    ///          @p q before calling if necessary.
+    void RotateAndTranslate(const Quatd& q, const Real3d& offset) {
+        for (auto& n : geom.nodes)
+            n = q.Rotate(n) + offset;
+    }
+
+    /// Scale all nodes uniformly by a scalar factor.
+    void Scale(double factor) {
+        for (auto& n : geom.nodes)
+            n = n * factor;
+    }
+
+    /// Scale all nodes independently along each axis.
+    void Scale(double sx, double sy, double sz) {
+        for (auto& n : geom.nodes) {
+            n.x() *= sx;
+            n.y() *= sy;
+            n.z() *= sz;
+        }
+    }
+
+    /// Mirror all nodes across the plane defined by a normal direction and a
+    /// point on the plane.  The normal is normalized internally so any
+    /// non-zero direction vector may be supplied.
+    /// Reflection formula: x' = x - 2*((x-p)·n̂)*n̂
+    void Mirror(const Real3d& normal, const Real3d& point = Real3d(0, 0, 0)) {
+        Real3d n = normal.GetNormalized();
+        for (auto& nd : geom.nodes) {
+            Real3d d = nd - point;
+            double proj = d ^ n;  // dot product
+            nd = nd - n * (2.0 * proj);
+        }
+    }
 };
 
 //////////////////////////////////////////////////////////////
