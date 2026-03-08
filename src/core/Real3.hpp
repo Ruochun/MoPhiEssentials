@@ -23,7 +23,6 @@
 #include <algorithm>
 #include <cmath>
 #include <ostream>
-#include <limits>
 #ifdef MOPHI_USE_CUDA
     #include <cuda_runtime_api.h>
 #endif
@@ -37,6 +36,31 @@
 #endif
 
 namespace mophi {
+
+// =============================================================================
+// Device-safe smallest positive normalized values for float/double.
+// These replace std::numeric_limits<T>::min() calls in __host__ __device__
+// functions to avoid CUDA "calling a constexpr __host__ function from a
+// __host__ __device__ function is not allowed" warnings.
+// =============================================================================
+namespace detail {
+template <typename T>
+struct RealMin {
+    static_assert(sizeof(T) == 0,
+                  "mophi::detail::RealMin is only specialised for float and double. "
+                  "Instantiating Real3 with other scalar types is not supported.");
+};
+
+template <>
+struct RealMin<float> {
+    static constexpr float value = 1.17549435e-38f;  ///< Smallest positive normalized float (FLT_MIN)
+};
+
+template <>
+struct RealMin<double> {
+    static constexpr double value = 2.2250738585072014e-308;  ///< Smallest positive normalized double (DBL_MIN)
+};
+}  // namespace detail
 
 /// Definition of general purpose 3d vector variables, such as points in 3D.
 /// This class implements the vectorial algebra in 3D (Gibbs products).
@@ -821,7 +845,7 @@ inline MOPHI_HD Real Real3<Real>::LengthInf() const {
 template <class Real>
 inline MOPHI_HD bool Real3<Real>::Normalize() {
     Real length = this->Length();
-    if (length < std::numeric_limits<Real>::min()) {
+    if (length < detail::RealMin<Real>::value) {
         m_data[0] = 1;
         m_data[1] = 0;
         m_data[2] = 0;
