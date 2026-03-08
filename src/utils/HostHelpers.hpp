@@ -394,25 +394,6 @@ inline std::string compact_code(const std::string& prgm) {
 
 /// Get a quaternion from axis and angle
 #ifdef MOPHI_USE_CUDA
-inline float4 QuatFromAxisAngle(const float3& axis, const float& theta) {
-    float4 Q;
-    Q.x = axis.x * sin(theta / 2);
-    Q.y = axis.y * sin(theta / 2);
-    Q.z = axis.z * sin(theta / 2);
-    Q.w = cos(theta / 2);
-    return Q;
-}
-
-/// Host version of Quaternion product
-inline float4 hostHamiltonProduct(const float4& Q1, const float4& Q2) {
-    float4 Q;
-    Q.w = Q1.w * Q2.w - Q1.x * Q2.x - Q1.y * Q2.y - Q1.z * Q2.z;
-    Q.x = Q1.w * Q2.x + Q1.x * Q2.w + Q1.y * Q2.z - Q1.z * Q2.y;
-    Q.y = Q1.w * Q2.y - Q1.x * Q2.z + Q1.y * Q2.w + Q1.z * Q2.x;
-    Q.z = Q1.w * Q2.z + Q1.x * Q2.y - Q1.y * Q2.x + Q1.z * Q2.w;
-    return Q;
-}
-
 /// Rotate a quaternion about an unit axis by an angle
 inline float4 RotateQuat(const float4& quat, const float3& axis, const float& theta) {
     // Rotation to quaternion first
