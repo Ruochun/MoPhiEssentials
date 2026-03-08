@@ -223,6 +223,36 @@ int main() {
     }
 
     // -----------------------------------------------------------------------
+    // 10. Rotate(Quaternion) overload — quaternion composition
+    // -----------------------------------------------------------------------
+    std::cout << "\n[10] Rotate(Quaternion) overload (quaternion composition)" << std::endl;
+    {
+        // Applying a 90° X-rotation to a 90° Z-rotation quaternion should
+        // produce the same result as the Hamilton product qX * qZ.
+        Real3d xAxis(1, 0, 0);
+        Real3d zAxis(0, 0, 1);
+        Quatd qX = Quatd::FromAxisAngle(xAxis, pi / 2.0);
+        Quatd qZ = Quatd::FromAxisAngle(zAxis, pi / 2.0);
+
+        // Rotate via new overload
+        Quatd composed = qX.Rotate(qZ);
+
+        // Same as Hamilton product
+        Quatd expected = qX * qZ;
+
+        // They must produce identical results on any test vector
+        Real3d v(1, 1, 0);
+        check_vec_near(composed.Rotate(v), expected.Rotate(v), 1e-10, "Rotate(Quat) == Hamilton product");
+        std::cout << "    ✓ Rotate(Quaternion) matches direct Hamilton product" << std::endl;
+
+        // Check: applying identity rotation to a quaternion leaves it unchanged
+        Quatd identity;
+        Quatd unchanged = identity.Rotate(qZ);
+        check_vec_near(unchanged.Rotate(v), qZ.Rotate(v), 1e-10, "identity.Rotate(q) == q");
+        std::cout << "    ✓ identity.Rotate(q) leaves q unchanged" << std::endl;
+    }
+
+    // -----------------------------------------------------------------------
     // Summary
     // -----------------------------------------------------------------------
     std::cout << "\n=== All Quaternion Tests Passed! ===" << std::endl;

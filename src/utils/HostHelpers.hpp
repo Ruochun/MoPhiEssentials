@@ -392,17 +392,6 @@ inline std::string compact_code(const std::string& prgm) {
     return res;
 }
 
-/// Get a quaternion from axis and angle
-#ifdef MOPHI_USE_CUDA
-/// Rotate a quaternion about an unit axis by an angle
-inline float4 RotateQuat(const float4& quat, const float3& axis, const float& theta) {
-    // Rotation to quaternion first
-    float4 rot = QuatFromAxisAngle(axis, theta);
-    // Apply
-    return hostHamiltonProduct(rot, quat);
-}
-#endif  // MOPHI_USE_CUDA
-
 /// Rotate a vector about an unit axis by an angle
 template <typename T>
 inline Real3<T> Rodrigues(const Real3<T>& vec, const Real3<T>& axis, const T& theta) {
