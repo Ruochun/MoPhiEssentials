@@ -204,7 +204,9 @@ class Logger : private NonCopyable, public Singleton<Logger> {
                 oss << "[STATUS]  ";
                 break;
         }
-        oss << Log.source << ": " << Log.message << " (" << Log.file << ":" << Log.line << ")";
+        oss << Log.source << ": " << Log.message;
+        if (Log.type == MessageType::Error)
+            oss << " (" << Log.file << ":" << Log.line << ")";
         if (!Log.identifier.empty() && Log.type == MessageType::Status)
             oss << " [id: " << Log.identifier << "]";
         return oss.str();
