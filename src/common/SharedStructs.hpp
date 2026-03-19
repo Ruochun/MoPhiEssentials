@@ -4,17 +4,17 @@
 #ifndef MOPHI_SHARED_STRUCTS_HPP
 #define MOPHI_SHARED_STRUCTS_HPP
 
-#include <core/DataClasses.hpp>
+#include "core/DataClasses.hpp"
 #ifdef MOPHI_USE_CUDA
-    #include <core/CudaAllocator.hpp>
-    #include <core/ManagedMemory.hpp>
+    #include "core/CudaAllocator.hpp"
+    #include "core/ManagedMemory.hpp"
 #endif
-#include <core/Logger.hpp>
-#include <core/DataMigrationHelper.hpp>
-#include <core/Real3.hpp>
-#include <kernels/HelperKernels.cuh>
-#include <common/Defines.hpp>
-#include <utils/HostHelpers.hpp>
+#include "core/Logger.hpp"
+#include "core/DataMigrationHelper.hpp"
+#include "core/Real3.hpp"
+#include "kernels/HelperKernels.cuh"
+#include "common/Defines.hpp"
+#include "utils/HostHelpers.hpp"
 
 #include <sstream>
 #include <exception>

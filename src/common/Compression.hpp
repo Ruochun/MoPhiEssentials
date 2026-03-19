@@ -7,12 +7,12 @@
 #include <string>
 #include <vector>
 
-#include <common/Defines.hpp>
+#include "common/Defines.hpp"
 #ifdef MOPHI_USE_CUDA
-    #include <core/DataMigrationHelper.hpp>
+    #include "core/DataMigrationHelper.hpp"
 #endif
-#include <core/Real3.hpp>
-#include <kernels/Compression.cuh>
+#include "core/Real3.hpp"
+#include "kernels/Compression.cuh"
 
 namespace mophi {
 

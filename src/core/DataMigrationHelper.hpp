@@ -7,10 +7,10 @@
 #include <cassert>
 #include <optional>
 #include <unordered_map>
-#include <core/Logger.hpp>
-#include <core/BaseClasses.hpp>
-#include <core/CudaAllocator.hpp>
-#include <common/VariableTypes.hpp>
+#include "core/Logger.hpp"
+#include "core/BaseClasses.hpp"
+#include "core/CudaAllocator.hpp"
+#include "common/VariableTypes.hpp"
 
 namespace mophi {
 

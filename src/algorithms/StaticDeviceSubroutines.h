@@ -4,14 +4,14 @@
 #ifndef MOPHI_STATIC_DEVICE_SUBROUTINES_H
 #define MOPHI_STATIC_DEVICE_SUBROUTINES_H
 
-#include <common/Defines.hpp>
-#include <common/Compression.hpp>
-#include <common/SharedStructs.hpp>
-#include <common/Mesh.hpp>
+#include "common/Defines.hpp"
+#include "common/Compression.hpp"
+#include "common/SharedStructs.hpp"
+#include "common/Mesh.hpp"
 
-#include <core/GpuManager.h>
-#include <core/CudaAllocator.hpp>
-#include <core/DataClasses.hpp>
+#include "core/GpuManager.h"
+#include "core/CudaAllocator.hpp"
+#include "core/DataClasses.hpp"
 
 namespace mophi {
 

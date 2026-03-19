@@ -14,8 +14,8 @@
 #include <cassert>
 
 #include "pugixml.hpp"
-#include <common/SharedStructs.hpp>
-#include <common/Mesh.hpp>
+#include "common/SharedStructs.hpp"
+#include "common/Mesh.hpp"
 
 namespace mophi {
 

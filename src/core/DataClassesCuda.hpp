@@ -7,8 +7,8 @@
 #ifdef MOPHI_USE_CUDA
 
     #include <limits>
-    #include <core/DataContainerBase.hpp>
-    #include <core/DataMigrationHelper.hpp>
+    #include "core/DataContainerBase.hpp"
+    #include "core/DataMigrationHelper.hpp"
 
 namespace mophi {
 

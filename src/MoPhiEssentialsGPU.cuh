@@ -12,8 +12,8 @@
  * For CPU-only code, use MoPhiEssentials.h instead.
  *
  * @code{.cu}
- * #include <MoPhiEssentials.h>      // CPU-side functionality
- * #include <MoPhiEssentialsGPU.cuh> // GPU-side functionality
+ * #include "MoPhiEssentials.h"      // CPU-side functionality
+ * #include "MoPhiEssentialsGPU.cuh" // GPU-side functionality
  *
  * __global__ void myKernel() {
  *     // Use GPU utilities here

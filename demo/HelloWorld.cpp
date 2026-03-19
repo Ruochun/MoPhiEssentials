@@ -4,7 +4,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include <utils/Timer.hpp>
+#include "utils/Timer.hpp"
 
 int main() {
     mophi::Timer timer;

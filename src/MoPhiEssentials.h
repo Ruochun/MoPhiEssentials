@@ -10,7 +10,7 @@
  * that requires nvcc compilation, use MoPhiEssentialsGPU.cuh instead.
  *
  * @code{.cpp}
- * #include <MoPhiEssentials.h>
+ * #include "MoPhiEssentials.h"
  *
  * int main() {
  *     mophi::Real3f vec(1.0f, 2.0f, 3.0f);
@@ -22,8 +22,8 @@
  *
  * @note For .cu files that need GPU kernels and device code, also include:
  * @code{.cu}
- * #include <MoPhiEssentials.h>
- * #include <MoPhiEssentialsGPU.cuh>
+ * #include "MoPhiEssentials.h"
+ * #include "MoPhiEssentialsGPU.cuh"
  * @endcode
  */
 

@@ -5,10 +5,10 @@
 #define MOPHI_CUB_WRAPPERS_CUH
 
 #include <cub/cub.cuh>
-#include <common/Defines.hpp>
-#include <common/SharedStructs.hpp>
-#include <core/Logger.hpp>
-#include <core/DataClasses.hpp>
+#include "common/Defines.hpp"
+#include "common/SharedStructs.hpp"
+#include "core/Logger.hpp"
+#include "core/DataClasses.hpp"
 
 namespace mophi {
 

@@ -16,8 +16,8 @@
 #ifdef MOPHI_USE_CUDA
     #include <cuda_runtime_api.h>
 #endif
-#include <core/BaseClasses.hpp>
-#include <common/Defines.hpp>
+#include "core/BaseClasses.hpp"
+#include "common/Defines.hpp"
 
 namespace mophi {
 

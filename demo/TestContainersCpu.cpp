@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <iostream>
-#include <core/DataClassesCpu.hpp>
+#include "core/DataClassesCpu.hpp"
 
 using namespace mophi;
 

@@ -5,8 +5,8 @@
 #include <cmath>
 #include <cassert>
 #include "cuda_runtime.h"
-#include <core/Real3.hpp>
-#include <core/Logger.hpp>
+#include "core/Real3.hpp"
+#include "core/Logger.hpp"
 
 using namespace mophi;
 

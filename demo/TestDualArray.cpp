@@ -2,8 +2,8 @@
 #include <vector>
 #include <cassert>
 #include <cuda_runtime.h>
-#include <core/DataMigrationHelper.hpp>
-#include <utils/HostHelpers.hpp>
+#include "core/DataMigrationHelper.hpp"
+#include "utils/HostHelpers.hpp"
 
 using namespace mophi;
 

@@ -5,9 +5,9 @@
 #include <cassert>
 #include <vector>
 #include <cmath>
-#include <utils/MeshIO.hpp>
-#include <common/Mesh.hpp>
-#include <core/Quaternion.hpp>
+#include "utils/MeshIO.hpp"
+#include "common/Mesh.hpp"
+#include "core/Quaternion.hpp"
 
 int main() {
     std::cout << "=== Testing Mesh Functionality ===" << std::endl;

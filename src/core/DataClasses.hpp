@@ -10,10 +10,10 @@
 #ifndef MOPHI_DATA_CLASSES_HPP
 #define MOPHI_DATA_CLASSES_HPP
 
-#include <core/DataContainerBase.hpp>
-#include <core/DataClassesCpu.hpp>
+#include "core/DataContainerBase.hpp"
+#include "core/DataClassesCpu.hpp"
 #ifdef MOPHI_USE_CUDA
-    #include <core/DataClassesCuda.hpp>
+    #include "core/DataClassesCuda.hpp"
 #endif
 
 #endif
