@@ -8,8 +8,8 @@
 #include <algorithm>
 #include <cmath>
 
-#include <common/VariableTypes.hpp>
-#include <core/Real3.hpp>
+#include "VariableTypes.hpp"
+#include "../core/Real3.hpp"
 #ifdef MOPHI_USE_CUDA
     #include "cuda_runtime.h"
 #endif
@@ -34,7 +34,7 @@ namespace mophi {
 
 // Smallest positive normalized values for float/double — device-safe replacements for
 // std::numeric_limits<T>::min(), which is a __host__-only constexpr in CUDA.
-constexpr float  MOPHI_FLOAT_MIN  = 1.17549435e-38f;
+constexpr float MOPHI_FLOAT_MIN = 1.17549435e-38f;
 constexpr double MOPHI_DOUBLE_MIN = 2.2250738585072014e-308;
 
 // Macro constants

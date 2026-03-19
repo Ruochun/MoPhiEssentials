@@ -6,7 +6,7 @@
 
 #ifdef MOPHI_USE_CUDA
 
-    #include <core/ApiVersion.h>
+    #include "ApiVersion.h"
 
     #include <cuda_runtime_api.h>
     #include <climits>

@@ -9,8 +9,8 @@
  * GPU-side (MoPhiEssentialsGPU.cuh) unified headers together in CUDA code.
  */
 
-#include <MoPhiEssentials.h>
-#include <MoPhiEssentialsGPU.cuh>
+#include "MoPhiEssentials.h"
+#include "MoPhiEssentialsGPU.cuh"
 #include <iostream>
 
 using namespace mophi;

@@ -2,7 +2,7 @@
 //  SPDX-License-Identifier: BSD-3-Clause
 
 #include <iostream>
-#include <core/DataClassesCuda.hpp>
+#include "core/DataClassesCuda.hpp"
 
 using namespace mophi;
 

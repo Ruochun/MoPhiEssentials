@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
-#include <core/Quaternion.hpp>
+#include "core/Quaternion.hpp"
 
 // ---------------------------------------------------------------------------
 // Helper: check two doubles are within tolerance
