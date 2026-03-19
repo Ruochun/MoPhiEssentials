@@ -26,9 +26,9 @@
 #include <string_view>
 #include <variant>
 
-#include "core/Real3.hpp"
-#include "kernels/Compression.cuh"
-#include "common/VariableTypes.hpp"
+#include "../core/Real3.hpp"
+#include "../kernels/Compression.cuh"
+#include "../common/VariableTypes.hpp"
 
 namespace mophi {
 

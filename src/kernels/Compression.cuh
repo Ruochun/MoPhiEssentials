@@ -3,8 +3,8 @@
 #ifndef MOPHI_COMPRESSION_CUH
 #define MOPHI_COMPRESSION_CUH
 
-#include "common/Defines.hpp"
-#include "core/Real3.hpp"
+#include "../common/Defines.hpp"
+#include "../core/Real3.hpp"
 
 #include <cstdint>
 #include <type_traits>

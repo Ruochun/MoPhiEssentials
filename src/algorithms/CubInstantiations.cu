@@ -2,11 +2,11 @@
 //	SPDX-License-Identifier: BSD-3-Clause
 
 #include <cub/cub.cuh>
-#include "algorithms/StaticDeviceSubroutines.h"
+#include "StaticDeviceSubroutines.h"
 
-#include "core/Logger.hpp"
-#include "core/DataClasses.hpp"
-#include "algorithms/CubWrappers.cuh"
+#include "../core/Logger.hpp"
+#include "../core/DataClasses.hpp"
+#include "CubWrappers.cuh"
 
 namespace mophi {
 

@@ -4,13 +4,13 @@
 #ifndef MOPHI_MESH_HPP
 #define MOPHI_MESH_HPP
 
-#include "utils/robin_hood.h"
-#include "common/VariableTypes.hpp"
-#include "common/SharedStructs.hpp"
-#include "core/DataClasses.hpp"
-#include "core/Real3.hpp"
-#include "core/Quaternion.hpp"
-#include "kernels/Compression.cuh"
+#include "../utils/robin_hood.h"
+#include "VariableTypes.hpp"
+#include "SharedStructs.hpp"
+#include "../core/DataClasses.hpp"
+#include "../core/Real3.hpp"
+#include "../core/Quaternion.hpp"
+#include "../kernels/Compression.cuh"
 
 namespace mophi {
 

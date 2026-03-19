@@ -1,9 +1,9 @@
 //  Copyright (c) 2025, Ruochun Zhang
 //	SPDX-License-Identifier: BSD-3-Clause
 
-#include "algorithms/StaticDeviceSubroutines.h"
+#include "StaticDeviceSubroutines.h"
 
-#include "kernels/Compression.cuh"
+#include "../kernels/Compression.cuh"
 
 namespace mophi {
 
