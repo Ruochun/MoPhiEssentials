@@ -61,7 +61,7 @@ set_target_properties(
 	CUDA_ARCHITECTURES "${virtual_architectures}"
 )
 
-if(PROJECT_IS_TOP_LEVEL)
+if(MPE_ENABLE_INSTALL)
     install(
         TARGETS moAlgorithms
         PUBLIC_HEADER

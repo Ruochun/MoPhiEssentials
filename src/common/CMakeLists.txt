@@ -3,7 +3,7 @@
 
 message(STATUS "==== Configuring Common Components ====")
 
-if(PROJECT_IS_TOP_LEVEL)
+if(MPE_ENABLE_INSTALL)
     install(
         DIRECTORY ${ProjectIncludeSource}/common
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

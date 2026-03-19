@@ -47,6 +47,8 @@ else()
     endif()
 endif()
 
+option(MPE_ENABLE_INSTALL "Enable install rules for MoPhiEssentials" ${PROJECT_IS_TOP_LEVEL})
+
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting CMAKE_BUILD_TYPE to 'Release' (default)")
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
@@ -192,7 +194,7 @@ endif()
 # ---------------------------------------------------------------------------- #
 # Install unified include headers
 # ---------------------------------------------------------------------------- #
-if(PROJECT_IS_TOP_LEVEL)
+if(MPE_ENABLE_INSTALL)
     install(
         FILES 
             "${CMAKE_CURRENT_SOURCE_DIR}/src/MoPhiEssentials.h"

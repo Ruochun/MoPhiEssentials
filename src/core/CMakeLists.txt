@@ -60,7 +60,7 @@ set_target_properties(
 )
 
 # Install Core Headers
-if(PROJECT_IS_TOP_LEVEL)
+if(MPE_ENABLE_INSTALL)
     install(
         DIRECTORY ${ProjectIncludeSource}/core
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
