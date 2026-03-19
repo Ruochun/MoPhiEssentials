@@ -61,8 +61,10 @@ set_target_properties(
 	CUDA_ARCHITECTURES "${virtual_architectures}"
 )
 
-install(
-	TARGETS moAlgorithms
-	PUBLIC_HEADER
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/algorithms
-)
+if(PROJECT_IS_TOP_LEVEL)
+    install(
+        TARGETS moAlgorithms
+        PUBLIC_HEADER
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/algorithms
+    )
+endif()

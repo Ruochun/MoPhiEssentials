@@ -5,7 +5,7 @@
 # CMake Project Settings
 # ---------------------------------------------------------------------------- #
 
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.21)
 
 # Version information
 set(MOPHI_ESSENTIALS_VERSION_MAJOR 1)
@@ -128,8 +128,11 @@ set(MOPHI_ESSENTIALS_INSTALL_DEMO "bin")
 # Source-level configuration
 # ---------------------------------------------------------------------------- #
 
+add_subdirectory(src/common)
 add_subdirectory(src/core)
+add_subdirectory(src/utils)
 if(MOPHI_CUDA_AVAILABLE)
+    add_subdirectory(src/kernels)
     add_subdirectory(src/algorithms)
 endif()
 
@@ -189,18 +192,29 @@ endif()
 # ---------------------------------------------------------------------------- #
 # Install unified include headers
 # ---------------------------------------------------------------------------- #
-install(
-    FILES 
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/MoPhiEssentials.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/MoPhiEssentialsGPU.cuh"
-    DESTINATION
-        ${CMAKE_INSTALL_INCLUDEDIR}
-)
+if(PROJECT_IS_TOP_LEVEL)
+    install(
+        FILES 
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/MoPhiEssentials.h"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/MoPhiEssentialsGPU.cuh"
+        DESTINATION
+            ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+
+    install(
+        TARGETS mophi_essentials
+        EXPORT MoPhiEssentialsTargets
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    )
+endif()
 
 # ---------------------------------------------------------------------------- #
 # Build embedded demos
 # ---------------------------------------------------------------------------- #
 # Only build demos when MoPhiEssentials is the main project, not as a submodule
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if(PROJECT_IS_TOP_LEVEL)
     add_subdirectory(demo)
 endif()

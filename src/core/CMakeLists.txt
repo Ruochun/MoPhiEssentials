@@ -60,10 +60,12 @@ set_target_properties(
 )
 
 # Install Core Headers
-install(
-    DIRECTORY ${ProjectIncludeSource}/core
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        FILES_MATCHING 
-            PATTERN "*.h"
-            PATTERN "*.hpp"
-)
+if(PROJECT_IS_TOP_LEVEL)
+    install(
+        DIRECTORY ${ProjectIncludeSource}/core
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+            FILES_MATCHING 
+                PATTERN "*.h"
+                PATTERN "*.hpp"
+    )
+endif()

@@ -1,0 +1,15 @@
+# Copyright (c) 2025, Ruochun Zhang
+# SPDX-License-Identifier: BSD-3-Clause
+
+message(STATUS "==== Configuring GPU Kernel Components ====")
+
+if(PROJECT_IS_TOP_LEVEL)
+    install(
+        DIRECTORY ${ProjectIncludeSource}/kernels
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        FILES_MATCHING
+            PATTERN "*.h"
+            PATTERN "*.hpp"
+            PATTERN "*.cuh"
+    )
+endif()
