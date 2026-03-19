@@ -4,7 +4,7 @@
 #ifndef MOPHI_QUATERNION_H
 #define MOPHI_QUATERNION_H
 
-#include "Real3.hpp"
+#include <core/Real3.hpp>
 #include <cmath>
 #include <iostream>
 

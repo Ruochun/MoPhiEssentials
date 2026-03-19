@@ -11,7 +11,7 @@
 #include <common/VariableTypes.hpp>
 #include <core/Real3.hpp>
 #ifdef MOPHI_USE_CUDA
-    #include "cuda_runtime.h"
+    #include <cuda_runtime.h>
 #endif
 
 namespace mophi {

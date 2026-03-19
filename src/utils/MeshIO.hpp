@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <cassert>
 
-#include "pugixml.hpp"
+#include <utils/pugixml.hpp>
 #include <common/SharedStructs.hpp>
 #include <common/Mesh.hpp>
 

@@ -33,77 +33,77 @@
 // ============================================================================
 // Core API Version and Configuration
 // ============================================================================
-#include "core/ApiVersion.h"
+#include <core/ApiVersion.h>
 
 // ============================================================================
 // Foundation: Base Classes and Type Definitions
 // ============================================================================
-#include "core/BaseClasses.hpp"
-#include "common/VariableTypes.hpp"
+#include <core/BaseClasses.hpp>
+#include <common/VariableTypes.hpp>
 
 // ============================================================================
 // Core Math and Vector Operations
 // ============================================================================
-#include "core/Real3.hpp"
-#include "core/Quaternion.hpp"
+#include <core/Real3.hpp>
+#include <core/Quaternion.hpp>
 
 // ============================================================================
 // Common Definitions and Macros
 // ============================================================================
-#include "common/Defines.hpp"
+#include <common/Defines.hpp>
 
 // ============================================================================
 // Memory Management
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
-    #include "core/CudaAllocator.hpp"
-    #include "core/ManagedMemory.hpp"
+    #include <core/CudaAllocator.hpp>
+    #include <core/ManagedMemory.hpp>
 #endif
 
 // ============================================================================
 // Logging and Error Handling
 // ============================================================================
-#include "core/Logger.hpp"
+#include <core/Logger.hpp>
 
 // ============================================================================
 // Data Classes and Migration
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
-    #include "core/DataMigrationHelper.hpp"
-    #include "core/DataClassesCuda.hpp"
+    #include <core/DataMigrationHelper.hpp>
+    #include <core/DataClassesCuda.hpp>
 #endif
-#include "core/DataContainerBase.hpp"
-#include "core/DataClassesCpu.hpp"
+#include <core/DataContainerBase.hpp>
+#include <core/DataClassesCpu.hpp>
 
 // ============================================================================
 // GPU Management and Threading
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
-    #include "core/GpuManager.h"
+    #include <core/GpuManager.h>
 #endif
-#include "core/ThreadManager.hpp"
+#include <core/ThreadManager.hpp>
 
 // ============================================================================
 // Common Data Structures
 // ============================================================================
-#include "common/Compression.hpp"
-#include "common/SharedStructs.hpp"
-#include "common/Mesh.hpp"
+#include <common/Compression.hpp>
+#include <common/SharedStructs.hpp>
+#include <common/Mesh.hpp>
 
 // ============================================================================
 // Static Device Subroutines
 // ============================================================================
 #ifdef MOPHI_USE_CUDA
-    #include "algorithms/StaticDeviceSubroutines.h"
+    #include <algorithms/StaticDeviceSubroutines.h>
 #endif
 
 // ============================================================================
 // High-Level Utilities
 // ============================================================================
-#include "core/WavefrontMeshLoader.hpp"
-#include "utils/Timer.hpp"
-#include "utils/HostHelpers.hpp"
-#include "utils/Csv.hpp"
-#include "utils/MeshIO.hpp"
+#include <core/WavefrontMeshLoader.hpp>
+#include <utils/Timer.hpp>
+#include <utils/HostHelpers.hpp>
+#include <utils/Csv.hpp>
+#include <utils/MeshIO.hpp>
 
 #endif  // MOPHI_ESSENTIALS_H

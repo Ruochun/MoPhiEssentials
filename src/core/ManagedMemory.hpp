@@ -7,7 +7,7 @@
 #ifdef MOPHI_USE_CUDA
 
     #include <vector>
-    #include "CudaAllocator.hpp"
+    #include <core/CudaAllocator.hpp>
 
 // Convenience functions to help with Managed Memory (allocated using ManagedAllocator, typically)
 namespace mophi {

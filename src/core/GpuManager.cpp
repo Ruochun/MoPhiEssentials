@@ -7,8 +7,8 @@
 #include <stdexcept>
 #include <iostream>
 
-#include "GpuManager.h"
-#include "Logger.hpp"
+#include <core/GpuManager.h>
+#include <core/Logger.hpp>
 
 namespace mophi {
 
