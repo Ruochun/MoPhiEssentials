@@ -31,10 +31,4 @@
 #include "kernels/HelperKernels.cuh"
 #include "kernels/CUDAMathHelpers.cuh"
 
-// ============================================================================
-// Algorithm Utilities (Device Code) - Requires nvcc
-// ============================================================================
-#include "algorithms/Utilities.cuh"
-#include "algorithms/CubWrappers.cuh"
-
 #endif  // MOPHI_ESSENTIALS_GPU_CUH

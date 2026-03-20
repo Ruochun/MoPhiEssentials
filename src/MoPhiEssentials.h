@@ -91,13 +91,6 @@
 #include "common/Mesh.hpp"
 
 // ============================================================================
-// Static Device Subroutines
-// ============================================================================
-#ifdef MOPHI_USE_CUDA
-    #include "algorithms/StaticDeviceSubroutines.h"
-#endif
-
-// ============================================================================
 // High-Level Utilities
 // ============================================================================
 #include "core/WavefrontMeshLoader.hpp"
