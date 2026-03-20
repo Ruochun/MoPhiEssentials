@@ -29,11 +29,6 @@ MoPhiEssentials provides the foundational utilities that make a project "MoPhi-A
   - `Paths.h/cpp` - File path utilities
   - `WavefrontMeshLoader.hpp` - Mesh loading utilities
 
-### Algorithms (`src/algorithms/`)
-- **CUB Wrappers** (`CubWrappers.cuh`) - Convenience wrappers for NVIDIA CUB library operations
-- **Static Device Subroutines** - Pre-compiled CUDA kernels for common operations
-- **Compression Utilities** - Data compression for GPU memory optimization
-
 ### Device Kernels (`src/kernels/`)
 - `Compression.cuh` - Quantization and octahedral encoding
 - `HelperKernels.cuh` - Common device-side math helpers

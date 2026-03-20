@@ -58,7 +58,7 @@ endif()
 add_compile_definitions(MOPHI_ESSENTIALS_BUILD)
 
 if(MOPHI_CUDA_AVAILABLE)
-    # Define MOPHI_USE_CUDA globally so all sub-targets (moCore, moAlgorithms,
+    # Define MOPHI_USE_CUDA globally so all sub-targets (moCore,
     # demos) see it during compilation, not just the final mophi_essentials target.
     add_compile_definitions(MOPHI_USE_CUDA)
 endif()
@@ -135,7 +135,6 @@ add_subdirectory(src/core)
 add_subdirectory(src/utils)
 if(MOPHI_CUDA_AVAILABLE)
     add_subdirectory(src/kernels)
-    add_subdirectory(src/algorithms)
 endif()
 
 # ---------------------------------------------------------------------------- #
@@ -147,12 +146,10 @@ if(MOPHI_CUDA_AVAILABLE)
         mophi_essentials 
         STATIC
         $<TARGET_OBJECTS:moCore>
-        $<TARGET_OBJECTS:moAlgorithms>
     )
 
     # Extract include directories from the object bundles
     get_target_property(MOCORE_INTERFACE moCore INTERFACE_INCLUDE_DIRECTORIES)
-    get_target_property(MOALGORITHMS_INTERFACE moAlgorithms INTERFACE_INCLUDE_DIRECTORIES) 
 
     # Set include directories
     target_include_directories(mophi_essentials 
