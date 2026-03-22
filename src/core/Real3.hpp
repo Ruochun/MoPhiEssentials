@@ -259,6 +259,32 @@ class alignas(sizeof(Real) * 4) Real3 {  // alignment is for using Real3 in CUDA
     /// Return a unit vector orthogonal to this vector
     MOPHI_HD Real3<Real> GetOrthogonalVector() const;
 
+    // UTILITY METHODS
+
+    /// Return a new vector with each component clamped to [lo, hi].
+    MOPHI_HD Real3<Real> Clamp(Real lo, Real hi) const;
+
+    /// Return a new vector with each component clamped element-wise to [lo, hi].
+    MOPHI_HD Real3<Real> Clamp(const Real3<Real>& lo, const Real3<Real>& hi) const;
+
+    /// Return the linear interpolation between this and other by parameter t in [0,1].
+    MOPHI_HD Real3<Real> Lerp(const Real3<Real>& other, Real t) const;
+
+    /// Return a new vector with each component replaced by std::floor(component).
+    MOPHI_HD Real3<Real> Floor() const;
+
+    /// Return a new vector containing the fractional part of each component.
+    MOPHI_HD Real3<Real> Frac() const;
+
+    /// Return a new vector with each component replaced by std::fmod(component, divisor).
+    MOPHI_HD Real3<Real> Fmod(const Real3<Real>& divisor) const;
+
+    /// Return a new vector with each component replaced by std::abs(component).
+    MOPHI_HD Real3<Real> Abs() const;
+
+    /// Return the reflection of this vector about the surface normal n (n must be normalized).
+    MOPHI_HD Real3<Real> Reflect(const Real3<Real>& n) const;
+
   private:
     Real m_data[3];
 
@@ -972,6 +998,106 @@ inline MOPHI_HD Real3<Real> Real3<Real>::GetOrthogonalVector() const {
     Real3<Real> ortho = Cross(v2);
     ortho.Normalize();
     return ortho;
+}
+
+// -----------------------------------------------------------------------------
+// Utility methods: Clamp, Lerp, Floor, Frac, Fmod, Abs, Reflect
+
+template <class Real>
+inline MOPHI_HD Real3<Real> Real3<Real>::Clamp(Real lo, Real hi) const {
+    return Real3<Real>(std::min(hi, std::max(lo, m_data[0])),
+                       std::min(hi, std::max(lo, m_data[1])),
+                       std::min(hi, std::max(lo, m_data[2])));
+}
+
+template <class Real>
+inline MOPHI_HD Real3<Real> Real3<Real>::Clamp(const Real3<Real>& lo, const Real3<Real>& hi) const {
+    return Real3<Real>(std::min(hi.m_data[0], std::max(lo.m_data[0], m_data[0])),
+                       std::min(hi.m_data[1], std::max(lo.m_data[1], m_data[1])),
+                       std::min(hi.m_data[2], std::max(lo.m_data[2], m_data[2])));
+}
+
+template <class Real>
+inline MOPHI_HD Real3<Real> Real3<Real>::Lerp(const Real3<Real>& other, Real t) const {
+    return (*this) + (other - (*this)) * t;
+}
+
+template <class Real>
+inline MOPHI_HD Real3<Real> Real3<Real>::Floor() const {
+    return Real3<Real>(std::floor(m_data[0]), std::floor(m_data[1]), std::floor(m_data[2]));
+}
+
+template <class Real>
+inline MOPHI_HD Real3<Real> Real3<Real>::Frac() const {
+    return (*this) - Floor();
+}
+
+template <class Real>
+inline MOPHI_HD Real3<Real> Real3<Real>::Fmod(const Real3<Real>& divisor) const {
+    return Real3<Real>(std::fmod(m_data[0], divisor.m_data[0]),
+                       std::fmod(m_data[1], divisor.m_data[1]),
+                       std::fmod(m_data[2], divisor.m_data[2]));
+}
+
+template <class Real>
+inline MOPHI_HD Real3<Real> Real3<Real>::Abs() const {
+    return Real3<Real>(std::abs(m_data[0]), std::abs(m_data[1]), std::abs(m_data[2]));
+}
+
+template <class Real>
+inline MOPHI_HD Real3<Real> Real3<Real>::Reflect(const Real3<Real>& n) const {
+    return (*this) - n * (Real(2) * this->Dot(n));
+}
+
+// -----------------------------------------------------------------------------
+// Free function wrappers (V-prefix convention, consistent with Vmin/Vmax/Vcross etc.)
+
+/// Clamp each component of v to [lo, hi].
+template <class Real>
+MOPHI_HD inline Real3<Real> Vclamp(const Real3<Real>& v, Real lo, Real hi) {
+    return v.Clamp(lo, hi);
+}
+
+/// Clamp each component of v element-wise to [lo, hi].
+template <class Real>
+MOPHI_HD inline Real3<Real> Vclamp(const Real3<Real>& v, const Real3<Real>& lo, const Real3<Real>& hi) {
+    return v.Clamp(lo, hi);
+}
+
+/// Linear interpolation between a and b by t in [0,1].
+template <class Real>
+MOPHI_HD inline Real3<Real> Vlerp(const Real3<Real>& a, const Real3<Real>& b, Real t) {
+    return a.Lerp(b, t);
+}
+
+/// Element-wise floor.
+template <class Real>
+MOPHI_HD inline Real3<Real> Vfloor(const Real3<Real>& v) {
+    return v.Floor();
+}
+
+/// Element-wise fractional part.
+template <class Real>
+MOPHI_HD inline Real3<Real> Vfrac(const Real3<Real>& v) {
+    return v.Frac();
+}
+
+/// Element-wise fmod.
+template <class Real>
+MOPHI_HD inline Real3<Real> Vfmod(const Real3<Real>& v, const Real3<Real>& divisor) {
+    return v.Fmod(divisor);
+}
+
+/// Element-wise absolute value.
+template <class Real>
+MOPHI_HD inline Real3<Real> Vabs(const Real3<Real>& v) {
+    return v.Abs();
+}
+
+/// Reflect vector v about surface normal n (n must be normalized).
+template <class Real>
+MOPHI_HD inline Real3<Real> Vreflect(const Real3<Real>& v, const Real3<Real>& n) {
+    return v.Reflect(n);
 }
 
 // -----------------------------------------------------------------------------

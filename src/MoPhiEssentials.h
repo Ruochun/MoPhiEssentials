@@ -45,6 +45,8 @@
 // Core Math and Vector Operations
 // ============================================================================
 #include "core/Real3.hpp"
+#include "core/Real4.hpp"
+#include "core/Int3.hpp"
 #include "core/Quaternion.hpp"
 
 // ============================================================================
