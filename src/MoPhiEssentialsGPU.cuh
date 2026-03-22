@@ -29,6 +29,5 @@
 // ============================================================================
 #include "kernels/Compression.cuh"
 #include "kernels/HelperKernels.cuh"
-#include "kernels/CUDAMathHelpers.cuh"
 
 #endif  // MOPHI_ESSENTIALS_GPU_CUH

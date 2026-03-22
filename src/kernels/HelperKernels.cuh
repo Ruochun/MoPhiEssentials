@@ -1,19 +1,57 @@
-// DEM device-side helper kernel collection
+/* Copyright (c) 2019, NVIDIA CORPORATION. All rights reserved.
+ * Portions copyright (c) 2025, Ruochun Zhang
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *  * Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *  * Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *  * Neither the name of NVIDIA CORPORATION nor the names of its
+ *    contributors may be used to endorse or promote products derived
+ *    from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/**
+ * @file HelperKernels.cuh
+ * @brief Device-side MoPhi geometry and index helper functions (namespace mophi).
+ *
+ * Vector math utilities (clamp, lerp, floor, frac, fmod, abs, reflect, etc.)
+ * are provided as member methods and free functions on mophi::Real3 and mophi::Real4
+ * — see core/Real3.hpp and core/Real4.hpp.
+ */
 
 #ifndef MOPHI_HELPER_KERNELS_CUH
 #define MOPHI_HELPER_KERNELS_CUH
 
 #include "../common/Defines.hpp"
 #include "../core/Real3.hpp"
+#include "../core/Real4.hpp"
 
 #include <cstdint>
 #include <type_traits>
 #include <limits>
 #include <cmath>
 
-////////////////////////////////////////////////////////////////////////////////
-// A few helper functions
-////////////////////////////////////////////////////////////////////////////////
+// ============================================================================
+// Geometry helpers (namespace mophi) - available with or without CUDA
+// ============================================================================
+namespace mophi {
 
 // Sign function
 template <typename T1>
@@ -35,7 +73,7 @@ MOPHI_HD inline T1 div_floor(const T1& a, const T2& b) {
 // Modulus that rounds towards -infty
 template <typename T1, typename T2>
 MOPHI_HD inline T1 mod_floor(const T1& a, const T2& b) {
-    if (b < 0)  // you can check for b == 0 separately and do what you want
+    if (b < 0)
         return -mod_floor(-a, -b);
     T1 ret = a % b;
     if (ret < 0)
@@ -53,24 +91,21 @@ MOPHI_HD inline T tet_centroid(const T& a, const T& b, const T& c, const T& d) {
             (a.z() + b.z() + c.z() + d.z()) / 4};
 }
 template <typename T>
-MOPHI_HD inline T tet_volume(const mophi::Real3<T>& a,
-                             const mophi::Real3<T>& b,
-                             const mophi::Real3<T>& c,
-                             const mophi::Real3<T>& d) {
+MOPHI_HD inline T tet_volume(const Real3<T>& a, const Real3<T>& b, const Real3<T>& c, const Real3<T>& d) {
     return std::abs((b - a) ^ ((c - a) % (d - a))) / 6.0;  // ^ is dot, % is cross
 }
 template <typename T>
-MOPHI_HD inline T tri_area(const mophi::Real3<T>& a, const mophi::Real3<T>& b, const mophi::Real3<T>& c) {
+MOPHI_HD inline T tri_area(const Real3<T>& a, const Real3<T>& b, const Real3<T>& c) {
     return 0.5 * ((b - a) % (c - a)).Length();
 }
 template <typename T>
-MOPHI_HD inline void tet_gradN_phys(const mophi::Real3<T>& a,
-                                    const mophi::Real3<T>& b,
-                                    const mophi::Real3<T>& c,
-                                    const mophi::Real3<T>& d,
-                                    mophi::Real3<T> g[4]) {
+MOPHI_HD inline void tet_gradN_phys(const Real3<T>& a,
+                                    const Real3<T>& b,
+                                    const Real3<T>& c,
+                                    const Real3<T>& d,
+                                    Real3<T> g[4]) {
     // ∇N1 = (e2 × e3)/det, ∇N2 = (e3 × e1)/det, ∇N3 = (e1 × e2)/det, ∇N0 = -Σ
-    const mophi::Real3<T> e1 = b - a, e2 = c - a, e3 = d - a;
+    const Real3<T> e1 = b - a, e2 = c - a, e3 = d - a;
     const T det = (e1 ^ (e2 % e3));
     const T inv = (T)1.0 / det;
     g[1] = (e2 % e3) * inv;
@@ -86,7 +121,7 @@ MOPHI_HD inline T hex_centroid(const T v[8]) {
     return (v[0] + v[1] + v[2] + v[3] + v[4] + v[5] + v[6] + v[7]) * inv8;
 }
 template <typename T>
-MOPHI_HD inline T hex_volume(const mophi::Real3<T> v[8]) {
+MOPHI_HD inline T hex_volume(const Real3<T> v[8]) {
     // decompose into 5 tets (fan from v0)
     const int ind[5][4] = {{0, 1, 3, 7}, {0, 3, 2, 7}, {0, 2, 6, 7}, {0, 6, 4, 7}, {0, 4, 5, 7}};
     T vol = 0;
@@ -113,4 +148,6 @@ MOPHI_HD inline void recover_pair_no_diag(T1& i, T1& j, const T1& ind, const T1&
     j = ind + i + 1 + (n - i) * ((n - i) - 1) / 2 - n * (n - 1) / 2;
 }
 
-#endif
+}  // namespace mophi
+
+#endif  // MOPHI_HELPER_KERNELS_CUH

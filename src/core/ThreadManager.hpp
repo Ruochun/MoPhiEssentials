@@ -8,6 +8,8 @@
 #include <condition_variable>
 #include <mutex>
 
+namespace mophi {
+
 // class holds on to statistics related to the scheduling process
 class ManagerStatistics {
   public:
@@ -118,5 +120,7 @@ class WorkerMainCoordination {
     }
     ~WorkerMainCoordination() {}
 };
+
+}  // namespace mophi
 
 #endif

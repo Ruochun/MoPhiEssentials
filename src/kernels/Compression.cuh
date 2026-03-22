@@ -15,6 +15,8 @@
 // A few helper functions
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace mophi {
+
 MOPHI_HD inline double clamp01(double t) {
     return t < 0.0 ? 0.0 : (t > 1.0 ? 1.0 : t);
 }
@@ -262,5 +264,7 @@ MOPHI_HD inline void DecompressLogscale_T(const CompT* in,
     oct_decode_to_unit(u01, v01, nx, ny, nz);
     *v_out = mophi::Real3<TFP>(static_cast<TFP>(m * nx), static_cast<TFP>(m * ny), static_cast<TFP>(m * nz));
 }
+
+}  // namespace mophi
 
 #endif
