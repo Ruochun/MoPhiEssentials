@@ -264,6 +264,9 @@ cd build/bin
 - `mophi::DualStruct<T>` - CPU-GPU synchronized struct
 - `mophi::GpuManager` - Multi-GPU stream manager
 - `mophi::Logger` - Thread-safe logging system
+- `mophi::ThreadManager` - Production-consumption thread coordination
+- `mophi::ManagerStatistics` - Thread scheduling statistics
+- `mophi::WorkerMainCoordination` - Main/worker thread synchronization
 
 ### Key Macros
 

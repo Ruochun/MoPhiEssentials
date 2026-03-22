@@ -15,6 +15,8 @@
 // A few helper functions
 ////////////////////////////////////////////////////////////////////////////////
 
+namespace mophi {
+
 // Sign function
 template <typename T1>
 MOPHI_HD inline int sgn(const T1& val) {
@@ -112,5 +114,7 @@ MOPHI_HD inline void recover_pair_no_diag(T1& i, T1& j, const T1& ind, const T1&
     i = n - 2 - (T1)(sqrt((float)(4 * n * (n - 1) - 7 - 8 * ind)) / 2.0 - 0.5);
     j = ind + i + 1 + (n - i) * ((n - i) - 1) / 2 - n * (n - 1) / 2;
 }
+
+}  // namespace mophi
 
 #endif
