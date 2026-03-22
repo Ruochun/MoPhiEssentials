@@ -48,7 +48,6 @@
 #include <limits>
 #include <cmath>
 
-
 // ============================================================================
 // Geometry helpers (namespace mophi) - available with or without CUDA
 // ============================================================================

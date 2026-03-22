@@ -29,6 +29,8 @@
     #endif
 #endif
 
+#include "../common/Defines.hpp"
+
 namespace mophi {
 
 /// 4-component vector templated on scalar type Real (default: float).
@@ -219,7 +221,8 @@ inline const MOPHI_HD Real& Real4<Real>::operator[](unsigned index) const {
 
 template <class Real>
 inline MOPHI_HD Real4<Real>& Real4<Real>::operator=(const Real4<Real>& other) {
-    if (&other == this) return *this;
+    if (&other == this)
+        return *this;
     m_data[0] = other.m_data[0];
     m_data[1] = other.m_data[1];
     m_data[2] = other.m_data[2];
@@ -239,7 +242,9 @@ inline MOPHI_HD Real4<Real>& Real4<Real>::operator=(const Real4<RealB>& other) {
 // Sign operators
 
 template <class Real>
-inline MOPHI_HD Real4<Real> Real4<Real>::operator+() const { return *this; }
+inline MOPHI_HD Real4<Real> Real4<Real>::operator+() const {
+    return *this;
+}
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::operator-() const {
     return Real4<Real>(-m_data[0], -m_data[1], -m_data[2], -m_data[3]);
@@ -249,66 +254,80 @@ inline MOPHI_HD Real4<Real> Real4<Real>::operator-() const {
 
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::operator+(const Real4<Real>& o) const {
-    return Real4<Real>(m_data[0]+o.m_data[0], m_data[1]+o.m_data[1],
-                       m_data[2]+o.m_data[2], m_data[3]+o.m_data[3]);
+    return Real4<Real>(m_data[0] + o.m_data[0], m_data[1] + o.m_data[1], m_data[2] + o.m_data[2],
+                       m_data[3] + o.m_data[3]);
 }
 template <class Real>
 inline MOPHI_HD Real4<Real>& Real4<Real>::operator+=(const Real4<Real>& o) {
-    m_data[0]+=o.m_data[0]; m_data[1]+=o.m_data[1];
-    m_data[2]+=o.m_data[2]; m_data[3]+=o.m_data[3];
+    m_data[0] += o.m_data[0];
+    m_data[1] += o.m_data[1];
+    m_data[2] += o.m_data[2];
+    m_data[3] += o.m_data[3];
     return *this;
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::operator-(const Real4<Real>& o) const {
-    return Real4<Real>(m_data[0]-o.m_data[0], m_data[1]-o.m_data[1],
-                       m_data[2]-o.m_data[2], m_data[3]-o.m_data[3]);
+    return Real4<Real>(m_data[0] - o.m_data[0], m_data[1] - o.m_data[1], m_data[2] - o.m_data[2],
+                       m_data[3] - o.m_data[3]);
 }
 template <class Real>
 inline MOPHI_HD Real4<Real>& Real4<Real>::operator-=(const Real4<Real>& o) {
-    m_data[0]-=o.m_data[0]; m_data[1]-=o.m_data[1];
-    m_data[2]-=o.m_data[2]; m_data[3]-=o.m_data[3];
+    m_data[0] -= o.m_data[0];
+    m_data[1] -= o.m_data[1];
+    m_data[2] -= o.m_data[2];
+    m_data[3] -= o.m_data[3];
     return *this;
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::operator*(const Real4<Real>& o) const {
-    return Real4<Real>(m_data[0]*o.m_data[0], m_data[1]*o.m_data[1],
-                       m_data[2]*o.m_data[2], m_data[3]*o.m_data[3]);
+    return Real4<Real>(m_data[0] * o.m_data[0], m_data[1] * o.m_data[1], m_data[2] * o.m_data[2],
+                       m_data[3] * o.m_data[3]);
 }
 template <class Real>
 inline MOPHI_HD Real4<Real>& Real4<Real>::operator*=(const Real4<Real>& o) {
-    m_data[0]*=o.m_data[0]; m_data[1]*=o.m_data[1];
-    m_data[2]*=o.m_data[2]; m_data[3]*=o.m_data[3];
+    m_data[0] *= o.m_data[0];
+    m_data[1] *= o.m_data[1];
+    m_data[2] *= o.m_data[2];
+    m_data[3] *= o.m_data[3];
     return *this;
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::operator/(const Real4<Real>& o) const {
-    return Real4<Real>(m_data[0]/o.m_data[0], m_data[1]/o.m_data[1],
-                       m_data[2]/o.m_data[2], m_data[3]/o.m_data[3]);
+    return Real4<Real>(m_data[0] / o.m_data[0], m_data[1] / o.m_data[1], m_data[2] / o.m_data[2],
+                       m_data[3] / o.m_data[3]);
 }
 template <class Real>
 inline MOPHI_HD Real4<Real>& Real4<Real>::operator/=(const Real4<Real>& o) {
-    m_data[0]/=o.m_data[0]; m_data[1]/=o.m_data[1];
-    m_data[2]/=o.m_data[2]; m_data[3]/=o.m_data[3];
+    m_data[0] /= o.m_data[0];
+    m_data[1] /= o.m_data[1];
+    m_data[2] /= o.m_data[2];
+    m_data[3] /= o.m_data[3];
     return *this;
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::operator*(Real s) const {
-    return Real4<Real>(m_data[0]*s, m_data[1]*s, m_data[2]*s, m_data[3]*s);
+    return Real4<Real>(m_data[0] * s, m_data[1] * s, m_data[2] * s, m_data[3] * s);
 }
 template <class Real>
 inline MOPHI_HD Real4<Real>& Real4<Real>::operator*=(Real s) {
-    m_data[0]*=s; m_data[1]*=s; m_data[2]*=s; m_data[3]*=s;
+    m_data[0] *= s;
+    m_data[1] *= s;
+    m_data[2] *= s;
+    m_data[3] *= s;
     return *this;
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::operator/(Real v) const {
     Real oos = Real(1) / v;
-    return Real4<Real>(m_data[0]*oos, m_data[1]*oos, m_data[2]*oos, m_data[3]*oos);
+    return Real4<Real>(m_data[0] * oos, m_data[1] * oos, m_data[2] * oos, m_data[3] * oos);
 }
 template <class Real>
 inline MOPHI_HD Real4<Real>& Real4<Real>::operator/=(Real v) {
     Real oos = Real(1) / v;
-    m_data[0]*=oos; m_data[1]*=oos; m_data[2]*=oos; m_data[3]*=oos;
+    m_data[0] *= oos;
+    m_data[1] *= oos;
+    m_data[2] *= oos;
+    m_data[3] *= oos;
     return *this;
 }
 
@@ -316,8 +335,7 @@ inline MOPHI_HD Real4<Real>& Real4<Real>::operator/=(Real v) {
 
 template <class Real>
 inline MOPHI_HD bool Real4<Real>::operator==(const Real4<Real>& o) const {
-    return m_data[0]==o.m_data[0] && m_data[1]==o.m_data[1] &&
-           m_data[2]==o.m_data[2] && m_data[3]==o.m_data[3];
+    return m_data[0] == o.m_data[0] && m_data[1] == o.m_data[1] && m_data[2] == o.m_data[2] && m_data[3] == o.m_data[3];
 }
 template <class Real>
 inline MOPHI_HD bool Real4<Real>::operator!=(const Real4<Real>& o) const {
@@ -332,87 +350,106 @@ inline MOPHI_HD Real Real4<Real>::operator^(const Real4<Real>& other) const {
 }
 template <class Real>
 inline MOPHI_HD Real Real4<Real>::Dot(const Real4<Real>& B) const {
-    return m_data[0]*B.m_data[0] + m_data[1]*B.m_data[1] +
-           m_data[2]*B.m_data[2] + m_data[3]*B.m_data[3];
+    return m_data[0] * B.m_data[0] + m_data[1] * B.m_data[1] + m_data[2] * B.m_data[2] + m_data[3] * B.m_data[3];
 }
 
 // Setters
 
 template <class Real>
 inline MOPHI_HD void Real4<Real>::Set(Real x, Real y, Real z, Real w) {
-    m_data[0]=x; m_data[1]=y; m_data[2]=z; m_data[3]=w;
+    m_data[0] = x;
+    m_data[1] = y;
+    m_data[2] = z;
+    m_data[3] = w;
 }
 template <class Real>
 inline MOPHI_HD void Real4<Real>::Set(const Real4<Real>& v) {
-    m_data[0]=v.m_data[0]; m_data[1]=v.m_data[1];
-    m_data[2]=v.m_data[2]; m_data[3]=v.m_data[3];
+    m_data[0] = v.m_data[0];
+    m_data[1] = v.m_data[1];
+    m_data[2] = v.m_data[2];
+    m_data[3] = v.m_data[3];
 }
 template <class Real>
 inline MOPHI_HD void Real4<Real>::Set(Real s) {
-    m_data[0]=m_data[1]=m_data[2]=m_data[3]=s;
+    m_data[0] = m_data[1] = m_data[2] = m_data[3] = s;
 }
 template <class Real>
 inline MOPHI_HD void Real4<Real>::SetNull() {
-    m_data[0]=m_data[1]=m_data[2]=m_data[3]=0;
+    m_data[0] = m_data[1] = m_data[2] = m_data[3] = 0;
 }
 
 // Tests
 
 template <class Real>
 inline MOPHI_HD bool Real4<Real>::IsNull() const {
-    return m_data[0]==0 && m_data[1]==0 && m_data[2]==0 && m_data[3]==0;
+    return m_data[0] == 0 && m_data[1] == 0 && m_data[2] == 0 && m_data[3] == 0;
 }
 template <class Real>
 inline MOPHI_HD bool Real4<Real>::Equals(const Real4<Real>& o) const {
-    return m_data[0]==o.m_data[0] && m_data[1]==o.m_data[1] &&
-           m_data[2]==o.m_data[2] && m_data[3]==o.m_data[3];
+    return m_data[0] == o.m_data[0] && m_data[1] == o.m_data[1] && m_data[2] == o.m_data[2] && m_data[3] == o.m_data[3];
 }
 template <class Real>
 inline MOPHI_HD bool Real4<Real>::Equals(const Real4<Real>& o, Real tol) const {
-    return std::abs(m_data[0]-o.m_data[0]) < tol && std::abs(m_data[1]-o.m_data[1]) < tol &&
-           std::abs(m_data[2]-o.m_data[2]) < tol && std::abs(m_data[3]-o.m_data[3]) < tol;
+    return std::abs(m_data[0] - o.m_data[0]) < tol && std::abs(m_data[1] - o.m_data[1]) < tol &&
+           std::abs(m_data[2] - o.m_data[2]) < tol && std::abs(m_data[3] - o.m_data[3]) < tol;
 }
 
 // Norms
 
 template <class Real>
-inline MOPHI_HD Real Real4<Real>::Length2() const { return Dot(*this); }
+inline MOPHI_HD Real Real4<Real>::Length2() const {
+    return Dot(*this);
+}
 
 template <class Real>
-inline MOPHI_HD Real Real4<Real>::Length() const { return std::sqrt(Length2()); }
+inline MOPHI_HD Real Real4<Real>::Length() const {
+    return std::sqrt(Length2());
+}
 
 template <class Real>
 inline MOPHI_HD Real Real4<Real>::LengthInf() const {
-    return std::max({std::abs(m_data[0]), std::abs(m_data[1]),
-                     std::abs(m_data[2]), std::abs(m_data[3])});
+    return MOPHI_MAX(MOPHI_MAX(MOPHI_MAX(std::abs(m_data[0]), std::abs(m_data[1])), std::abs(m_data[2])),
+                     std::abs(m_data[3]));
 }
 
 // Math functions
 
 template <class Real>
 inline MOPHI_HD void Real4<Real>::Add(const Real4<Real>& A, const Real4<Real>& B) {
-    m_data[0]=A.m_data[0]+B.m_data[0]; m_data[1]=A.m_data[1]+B.m_data[1];
-    m_data[2]=A.m_data[2]+B.m_data[2]; m_data[3]=A.m_data[3]+B.m_data[3];
+    m_data[0] = A.m_data[0] + B.m_data[0];
+    m_data[1] = A.m_data[1] + B.m_data[1];
+    m_data[2] = A.m_data[2] + B.m_data[2];
+    m_data[3] = A.m_data[3] + B.m_data[3];
 }
 template <class Real>
 inline MOPHI_HD void Real4<Real>::Sub(const Real4<Real>& A, const Real4<Real>& B) {
-    m_data[0]=A.m_data[0]-B.m_data[0]; m_data[1]=A.m_data[1]-B.m_data[1];
-    m_data[2]=A.m_data[2]-B.m_data[2]; m_data[3]=A.m_data[3]-B.m_data[3];
+    m_data[0] = A.m_data[0] - B.m_data[0];
+    m_data[1] = A.m_data[1] - B.m_data[1];
+    m_data[2] = A.m_data[2] - B.m_data[2];
+    m_data[3] = A.m_data[3] - B.m_data[3];
 }
 template <class Real>
 inline MOPHI_HD void Real4<Real>::Mul(const Real4<Real>& A, Real s) {
-    m_data[0]=A.m_data[0]*s; m_data[1]=A.m_data[1]*s;
-    m_data[2]=A.m_data[2]*s; m_data[3]=A.m_data[3]*s;
+    m_data[0] = A.m_data[0] * s;
+    m_data[1] = A.m_data[1] * s;
+    m_data[2] = A.m_data[2] * s;
+    m_data[3] = A.m_data[3] * s;
 }
 template <class Real>
 inline MOPHI_HD void Real4<Real>::Scale(Real s) {
-    m_data[0]*=s; m_data[1]*=s; m_data[2]*=s; m_data[3]*=s;
+    m_data[0] *= s;
+    m_data[1] *= s;
+    m_data[2] *= s;
+    m_data[3] *= s;
 }
 template <class Real>
 inline MOPHI_HD bool Real4<Real>::Normalize() {
     Real len = Length();
     if (len < Real(1.17549435e-38f)) {
-        m_data[0] = 1; m_data[1] = 0; m_data[2] = 0; m_data[3] = 0;
+        m_data[0] = 1;
+        m_data[1] = 0;
+        m_data[2] = 0;
+        m_data[3] = 0;
         return false;
     }
     Scale(Real(1) / len);
@@ -429,17 +466,15 @@ inline MOPHI_HD Real4<Real> Real4<Real>::GetNormalized() const {
 
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::Clamp(Real lo, Real hi) const {
-    return Real4<Real>(std::min(hi, std::max(lo, m_data[0])),
-                       std::min(hi, std::max(lo, m_data[1])),
-                       std::min(hi, std::max(lo, m_data[2])),
-                       std::min(hi, std::max(lo, m_data[3])));
+    return Real4<Real>(MOPHI_MIN(hi, MOPHI_MAX(lo, m_data[0])), MOPHI_MIN(hi, MOPHI_MAX(lo, m_data[1])),
+                       MOPHI_MIN(hi, MOPHI_MAX(lo, m_data[2])), MOPHI_MIN(hi, MOPHI_MAX(lo, m_data[3])));
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::Clamp(const Real4<Real>& lo, const Real4<Real>& hi) const {
-    return Real4<Real>(std::min(hi.m_data[0], std::max(lo.m_data[0], m_data[0])),
-                       std::min(hi.m_data[1], std::max(lo.m_data[1], m_data[1])),
-                       std::min(hi.m_data[2], std::max(lo.m_data[2], m_data[2])),
-                       std::min(hi.m_data[3], std::max(lo.m_data[3], m_data[3])));
+    return Real4<Real>(MOPHI_MIN(hi.m_data[0], MOPHI_MAX(lo.m_data[0], m_data[0])),
+                       MOPHI_MIN(hi.m_data[1], MOPHI_MAX(lo.m_data[1], m_data[1])),
+                       MOPHI_MIN(hi.m_data[2], MOPHI_MAX(lo.m_data[2], m_data[2])),
+                       MOPHI_MIN(hi.m_data[3], MOPHI_MAX(lo.m_data[3], m_data[3])));
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::Lerp(const Real4<Real>& other, Real t) const {
@@ -447,8 +482,7 @@ inline MOPHI_HD Real4<Real> Real4<Real>::Lerp(const Real4<Real>& other, Real t) 
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::Floor() const {
-    return Real4<Real>(std::floor(m_data[0]), std::floor(m_data[1]),
-                       std::floor(m_data[2]), std::floor(m_data[3]));
+    return Real4<Real>(std::floor(m_data[0]), std::floor(m_data[1]), std::floor(m_data[2]), std::floor(m_data[3]));
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::Frac() const {
@@ -461,8 +495,7 @@ inline MOPHI_HD Real4<Real> Real4<Real>::Fmod(const Real4<Real>& d) const {
 }
 template <class Real>
 inline MOPHI_HD Real4<Real> Real4<Real>::Abs() const {
-    return Real4<Real>(std::abs(m_data[0]), std::abs(m_data[1]),
-                       std::abs(m_data[2]), std::abs(m_data[3]));
+    return Real4<Real>(std::abs(m_data[0]), std::abs(m_data[1]), std::abs(m_data[2]), std::abs(m_data[3]));
 }
 
 // -----------------------------------------------------------------------------
@@ -470,7 +503,7 @@ inline MOPHI_HD Real4<Real> Real4<Real>::Abs() const {
 
 template <class Real>
 MOPHI_HD Real4<Real> operator*(Real s, const Real4<Real>& V) {
-    return Real4<Real>(V.x()*s, V.y()*s, V.z()*s, V.w()*s);
+    return Real4<Real>(V.x() * s, V.y() * s, V.z() * s, V.w() * s);
 }
 
 }  // namespace mophi

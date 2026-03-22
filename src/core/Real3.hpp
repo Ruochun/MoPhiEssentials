@@ -35,6 +35,8 @@
     #endif
 #endif
 
+#include "../common/Defines.hpp"
+
 namespace mophi {
 
 // =============================================================================
@@ -433,18 +435,18 @@ MOPHI_HD bool Vnotnull(const Real3<RealA>& va) {
 template <class RealA>
 MOPHI_HD Real3<RealA> Vmin(const Real3<RealA>& va, const Real3<RealA>& vb) {
     Real3<RealA> result;
-    result.x() = std::min(va.x(), vb.x());
-    result.y() = std::min(va.y(), vb.y());
-    result.z() = std::min(va.z(), vb.z());
+    result.x() = MOPHI_MIN(va.x(), vb.x());
+    result.y() = MOPHI_MIN(va.y(), vb.y());
+    result.z() = MOPHI_MIN(va.z(), vb.z());
     return result;
 }
 
 template <class RealA>
 MOPHI_HD Real3<RealA> Vmax(const Real3<RealA>& va, const Real3<RealA>& vb) {
     Real3<RealA> result;
-    result.x() = std::max(va.x(), vb.x());
-    result.y() = std::max(va.y(), vb.y());
-    result.z() = std::max(va.z(), vb.z());
+    result.x() = MOPHI_MAX(va.x(), vb.x());
+    result.y() = MOPHI_MAX(va.y(), vb.y());
+    result.z() = MOPHI_MAX(va.z(), vb.z());
     return result;
 }
 
@@ -865,7 +867,7 @@ inline MOPHI_HD Real Real3<Real>::Length2() const {
 
 template <class Real>
 inline MOPHI_HD Real Real3<Real>::LengthInf() const {
-    return std::max(std::max(std::abs(m_data[0]), std::abs(m_data[1])), std::abs(m_data[2]));
+    return MOPHI_MAX(MOPHI_MAX(std::abs(m_data[0]), std::abs(m_data[1])), std::abs(m_data[2]));
 }
 
 template <class Real>
@@ -1005,16 +1007,15 @@ inline MOPHI_HD Real3<Real> Real3<Real>::GetOrthogonalVector() const {
 
 template <class Real>
 inline MOPHI_HD Real3<Real> Real3<Real>::Clamp(Real lo, Real hi) const {
-    return Real3<Real>(std::min(hi, std::max(lo, m_data[0])),
-                       std::min(hi, std::max(lo, m_data[1])),
-                       std::min(hi, std::max(lo, m_data[2])));
+    return Real3<Real>(MOPHI_MIN(hi, MOPHI_MAX(lo, m_data[0])), MOPHI_MIN(hi, MOPHI_MAX(lo, m_data[1])),
+                       MOPHI_MIN(hi, MOPHI_MAX(lo, m_data[2])));
 }
 
 template <class Real>
 inline MOPHI_HD Real3<Real> Real3<Real>::Clamp(const Real3<Real>& lo, const Real3<Real>& hi) const {
-    return Real3<Real>(std::min(hi.m_data[0], std::max(lo.m_data[0], m_data[0])),
-                       std::min(hi.m_data[1], std::max(lo.m_data[1], m_data[1])),
-                       std::min(hi.m_data[2], std::max(lo.m_data[2], m_data[2])));
+    return Real3<Real>(MOPHI_MIN(hi.m_data[0], MOPHI_MAX(lo.m_data[0], m_data[0])),
+                       MOPHI_MIN(hi.m_data[1], MOPHI_MAX(lo.m_data[1], m_data[1])),
+                       MOPHI_MIN(hi.m_data[2], MOPHI_MAX(lo.m_data[2], m_data[2])));
 }
 
 template <class Real>
@@ -1034,8 +1035,7 @@ inline MOPHI_HD Real3<Real> Real3<Real>::Frac() const {
 
 template <class Real>
 inline MOPHI_HD Real3<Real> Real3<Real>::Fmod(const Real3<Real>& divisor) const {
-    return Real3<Real>(std::fmod(m_data[0], divisor.m_data[0]),
-                       std::fmod(m_data[1], divisor.m_data[1]),
+    return Real3<Real>(std::fmod(m_data[0], divisor.m_data[0]), std::fmod(m_data[1], divisor.m_data[1]),
                        std::fmod(m_data[2], divisor.m_data[2]));
 }
 
