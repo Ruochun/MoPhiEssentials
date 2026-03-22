@@ -32,8 +32,8 @@
  * @brief Device-side MoPhi geometry and index helper functions (namespace mophi).
  *
  * Vector math utilities (clamp, lerp, floor, frac, fmod, abs, reflect, etc.)
- * are provided as member methods and free functions on mophi::Real3, mophi::Real4,
- * and mophi::Int3 — see core/Real3.hpp, core/Real4.hpp, core/Int3.hpp.
+ * are provided as member methods and free functions on mophi::Real3 and mophi::Real4
+ * — see core/Real3.hpp and core/Real4.hpp.
  */
 
 #ifndef MOPHI_HELPER_KERNELS_CUH
@@ -42,7 +42,6 @@
 #include "../common/Defines.hpp"
 #include "../core/Real3.hpp"
 #include "../core/Real4.hpp"
-#include "../core/Int3.hpp"
 
 #include <cstdint>
 #include <type_traits>

@@ -25,7 +25,7 @@ SET(CPU_DEMOS
 SET(GPU_DEMOS
     TestDualArray.cpp
     TestContainers.cpp
-    TestReal3.cu
+    TestReal.cu
     TestUnifiedGPUHeader.cu
 )
 
