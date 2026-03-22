@@ -30,10 +30,12 @@ MoPhiEssentials provides the foundational utilities that make a project "MoPhi-A
   - `WavefrontMeshLoader.hpp` - Mesh loading utilities
 
 ### Device Kernels (`src/kernels/`)
+- `HelperKernels.cuh` - CUDA vector math extensions (originally `CUDAMathHelpers.cuh`) and common
+  device-side geometry helpers, all under `namespace mophi`. Note: operator overloads for CUDA
+  built-in types (`float3`, `double3`, etc.) intentionally remain in the global namespace so that
+  Argument-Dependent Lookup (ADL) continues to work for external code.
 - `Compression.cuh` - Quantization and octahedral encoding
-- `HelperKernels.cuh` - Common device-side math helpers
-- `CUDAMathHelpers.cuh` - CUDA vector math extensions
-- `Constants.cuh` - Device constants
+- `CUDAMathHelpers.cuh` - Backward-compatibility stub; includes `HelperKernels.cuh`
 
 ### Common Definitions (`src/common/`)
 - `Defines.hpp` - Common macros and compile-time definitions
