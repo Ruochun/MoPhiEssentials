@@ -417,6 +417,8 @@ int main() {
         const std::string obj_file = output_dir + "/test_multi_mesh.obj";
         mophi::SurfaceMesh tet = make_unit_tet();
         mophi::SurfaceMesh cube = make_unit_cube();
+        assert(tet.NumVertices() == 4 && tet.NumFaces() == 4);
+        assert(cube.NumVertices() == 8 && cube.NumFaces() == 12);
         WriteOBJ(obj_file, std::vector<mophi::SurfaceMesh>{tet, cube});
 
         mophi::SurfaceMesh combined;
@@ -425,6 +427,15 @@ int main() {
         const size_t expected_faces = tet.NumFaces() + cube.NumFaces();
         assert(combined.NumVertices() == expected_verts && "Multi-OBJ vertex count mismatch");
         assert(combined.NumFaces() == expected_faces && "Multi-OBJ face count mismatch");
+        for (size_t fi = 0; fi < tet.NumFaces(); ++fi) {
+            for (int k = 0; k < 3; ++k)
+                assert(combined.faces[fi][k] >= 0 && combined.faces[fi][k] < (int)tet.NumVertices());
+        }
+        for (size_t fi = tet.NumFaces(); fi < combined.NumFaces(); ++fi) {
+            for (int k = 0; k < 3; ++k)
+                assert(combined.faces[fi][k] >= (int)tet.NumVertices() &&
+                       combined.faces[fi][k] < (int)(tet.NumVertices() + cube.NumVertices()));
+        }
         std::cout << "  ✓ OBJ multi-mesh write/read OK ("
                   << combined.NumVertices() << " verts, " << combined.NumFaces() << " faces)\n";
     }
