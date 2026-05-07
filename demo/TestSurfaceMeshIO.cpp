@@ -251,10 +251,12 @@ int main() {
     {
         const std::string stl_file = output_dir + "/test_surface_mesh.stl";
         mophi::SurfaceMesh orig = make_unit_tet();
-        assert(WriteSTL(stl_file, orig, /*binary=*/true));
+        bool write_ok = WriteSTL(stl_file, orig, /*binary=*/true);
+        assert(write_ok);
 
         mophi::SurfaceMesh reloaded;
-        assert(LoadSTL(stl_file, reloaded, /*load_normals=*/true));
+        bool load_ok = LoadSTL(stl_file, reloaded, /*load_normals=*/true);
+        assert(load_ok);
 
         assert(reloaded.NumFaces() == orig.NumFaces() && "STL face count mismatch");
         // STL duplicates vertices per triangle: each face = 3 unique vertices
@@ -283,10 +285,12 @@ int main() {
     {
         const std::string stl_file = output_dir + "/test_surface_mesh_ascii.stl";
         mophi::SurfaceMesh orig = make_unit_tet();
-        assert(WriteSTL(stl_file, orig, /*binary=*/false));
+        bool write_ok = WriteSTL(stl_file, orig, /*binary=*/false);
+        assert(write_ok);
 
         mophi::SurfaceMesh reloaded;
-        assert(LoadSTL(stl_file, reloaded));
+        bool load_ok = LoadSTL(stl_file, reloaded);
+        assert(load_ok);
         assert(reloaded.NumFaces() == orig.NumFaces() && "ASCII STL face count mismatch");
         const double tol = 1e-7;
         for (size_t fi = 0; fi < orig.NumFaces(); ++fi) {
@@ -307,10 +311,12 @@ int main() {
     {
         const std::string stl_file = output_dir + "/test_surface_mesh_wt.stl";
         mophi::SurfaceMesh orig = make_unit_tet();
-        assert(WriteSTL(stl_file, orig, /*binary=*/true));
+        bool write_ok = WriteSTL(stl_file, orig, /*binary=*/true);
+        assert(write_ok);
 
         mophi::SurfaceMesh stl_mesh;
-        assert(LoadSTL(stl_file, stl_mesh));
+        bool load_ok = LoadSTL(stl_file, stl_mesh);
+        assert(load_ok);
         size_t be = 0, nme = 0;
         bool wt = stl_mesh.IsWatertight(&be, &nme);
         std::cout << "  STL-reloaded tet: watertight=" << wt << "  boundary=" << be
@@ -326,10 +332,12 @@ int main() {
     {
         const std::string ply_file = output_dir + "/test_surface_mesh.ply";
         mophi::SurfaceMesh orig = make_unit_cube();
-        assert(WritePLY(ply_file, orig, /*binary=*/false));
+        bool write_ok = WritePLY(ply_file, orig, /*binary=*/false);
+        assert(write_ok);
 
         mophi::SurfaceMesh reloaded;
-        assert(LoadPLY(ply_file, reloaded, /*load_normals=*/false));
+        bool load_ok = LoadPLY(ply_file, reloaded, /*load_normals=*/false);
+        assert(load_ok);
         assert(reloaded.NumVertices() == orig.NumVertices() && "PLY vertex count mismatch");
         assert(reloaded.NumFaces() == orig.NumFaces() && "PLY face count mismatch");
 
@@ -350,10 +358,12 @@ int main() {
     {
         const std::string ply_file = output_dir + "/test_surface_mesh_bin.ply";
         mophi::SurfaceMesh orig = make_unit_tet();
-        assert(WritePLY(ply_file, orig, /*binary=*/true));
+        bool write_ok = WritePLY(ply_file, orig, /*binary=*/true);
+        assert(write_ok);
 
         mophi::SurfaceMesh reloaded;
-        assert(LoadPLY(ply_file, reloaded));
+        bool load_ok = LoadPLY(ply_file, reloaded);
+        assert(load_ok);
         assert(reloaded.NumVertices() == orig.NumVertices() && "Binary PLY vertex count mismatch");
         assert(reloaded.NumFaces() == orig.NumFaces() && "Binary PLY face count mismatch");
         const double tol = 1e-5;  // float precision
@@ -370,10 +380,12 @@ int main() {
     {
         const std::string ply_file = output_dir + "/test_surface_mesh_normals.ply";
         mophi::SurfaceMesh orig = make_unit_tet();
-        assert(WritePLY(ply_file, orig, /*binary=*/false));
+        bool write_ok = WritePLY(ply_file, orig, /*binary=*/false);
+        assert(write_ok);
 
         mophi::SurfaceMesh reloaded;
-        assert(LoadPLY(ply_file, reloaded, /*load_normals=*/true));
+        bool load_ok = LoadPLY(ply_file, reloaded, /*load_normals=*/true);
+        assert(load_ok);
         assert(reloaded.HasNormals() && "Should have normals after load_normals=true");
         assert(reloaded.normals.size() == reloaded.NumFaces());
         // Bottom face normal should be ~(0,0,-1)
@@ -393,7 +405,8 @@ int main() {
         WriteOBJ(obj_file, orig);
 
         mophi::SurfaceMesh reloaded;
-        assert(LoadOBJ(obj_file, reloaded, /*load_normals=*/true));
+        bool load_ok = LoadOBJ(obj_file, reloaded, /*load_normals=*/true);
+        assert(load_ok);
 
         // OBJ preserves topology exactly (shared vertices, shared normals).
         assert(reloaded.NumVertices() == orig.NumVertices() && "OBJ vertex count mismatch");
@@ -422,7 +435,8 @@ int main() {
         WriteOBJ(obj_file, std::vector<mophi::SurfaceMesh>{tet, cube});
 
         mophi::SurfaceMesh combined;
-        assert(LoadOBJ(obj_file, combined, /*load_normals=*/false));
+        bool load_ok = LoadOBJ(obj_file, combined, /*load_normals=*/false);
+        assert(load_ok);
         const size_t expected_verts = tet.NumVertices() + cube.NumVertices();
         const size_t expected_faces = tet.NumFaces() + cube.NumFaces();
         assert(combined.NumVertices() == expected_verts && "Multi-OBJ vertex count mismatch");
