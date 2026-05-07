@@ -12,10 +12,15 @@
 #include <iostream>
 #include <stdexcept>
 #include <cassert>
+#include <cstdint>
+#include <cstring>
+#include <cmath>
+#include <map>
 
 #include "pugixml.hpp"
 #include "../common/SharedStructs.hpp"
 #include "../common/Mesh.hpp"
+#include "../core/WavefrontMeshLoader.hpp"
 
 namespace mophi {
 
@@ -552,6 +557,652 @@ inline void WriteVtu(const std::string& filename, const Mesh& mesh) {
 
     if (!doc.save_file(filename.c_str()))
         MOPHI_ERROR("Failed to write VTU file: " + filename);
+}
+
+// =============================================================================
+// SurfaceMesh STL I/O
+// =============================================================================
+
+/// Load a surface mesh from an STL file (binary or ASCII auto-detected).
+///
+/// @param filename     Path to the .stl file.
+/// @param mesh         Output mesh (cleared first).
+/// @param load_normals If true, compute per-face geometric normals from vertex
+///                     winding (the STL file's embedded normals are ignored as
+///                     they can be inconsistent).
+/// @returns true on success.
+inline bool LoadSTL(const std::string& filename, SurfaceMesh& mesh, bool load_normals = false) {
+    mesh.Clear();
+
+    std::ifstream file(filename, std::ios::binary);
+    if (!file) {
+        std::cerr << "LoadSTL: cannot open file: " << filename << "\n";
+        return false;
+    }
+
+    std::vector<char> buffer((std::istreambuf_iterator<char>(file)),
+                             std::istreambuf_iterator<char>());
+    if (buffer.size() < 84) {
+        std::cerr << "LoadSTL: file too small: " << filename << "\n";
+        return false;
+    }
+
+    // Heuristic: binary STL begins with an 80-byte header followed by a 4-byte
+    // triangle count, then exactly (count * 50) bytes of triangle data.
+    uint32_t tri_count = 0;
+    std::memcpy(&tri_count, buffer.data() + 80, sizeof(uint32_t));
+    const size_t expected_bin = 84 + static_cast<size_t>(tri_count) * 50;
+    const bool looks_binary = (expected_bin == buffer.size());
+
+    bool parsed = false;
+
+    if (looks_binary) {
+        const unsigned char* data = reinterpret_cast<const unsigned char*>(buffer.data());
+        size_t offset = 84;
+        for (uint32_t i = 0; i < tri_count; ++i) {
+            float floats[12];
+            std::memcpy(floats, data + offset, sizeof(float) * 12);
+            const int base = static_cast<int>(mesh.vertices.size());
+            mesh.vertices.push_back(Real3d(floats[3], floats[4], floats[5]));
+            mesh.vertices.push_back(Real3d(floats[6], floats[7], floats[8]));
+            mesh.vertices.push_back(Real3d(floats[9], floats[10], floats[11]));
+            mesh.faces.push_back({base, base + 1, base + 2});
+            offset += 50;
+        }
+        parsed = !mesh.faces.empty();
+    }
+
+    if (!parsed) {
+        // Fallback: ASCII STL
+        std::istringstream iss(std::string(buffer.begin(), buffer.end()));
+        std::string line;
+        std::vector<Real3d> facet_verts;
+        facet_verts.reserve(3);
+        while (std::getline(iss, line)) {
+            std::istringstream ls(line);
+            std::string token;
+            ls >> token;
+            if (token == "facet") {
+                facet_verts.clear();
+            } else if (token == "vertex") {
+                double vx, vy, vz;
+                if (ls >> vx >> vy >> vz) {
+                    facet_verts.push_back(Real3d(vx, vy, vz));
+                    if (facet_verts.size() == 3) {
+                        const int base = static_cast<int>(mesh.vertices.size());
+                        mesh.vertices.push_back(facet_verts[0]);
+                        mesh.vertices.push_back(facet_verts[1]);
+                        mesh.vertices.push_back(facet_verts[2]);
+                        mesh.faces.push_back({base, base + 1, base + 2});
+                    }
+                }
+            }
+        }
+        parsed = !mesh.faces.empty();
+    }
+
+    if (!parsed || mesh.faces.empty()) {
+        std::cerr << "LoadSTL: failed to parse: " << filename << "\n";
+        return false;
+    }
+
+    if (load_normals)
+        mesh.ComputeFaceNormals();
+
+    return true;
+}
+
+/// Write a surface mesh to an STL file.
+///
+/// @param filename  Path to the output .stl file.
+/// @param mesh      Mesh to write.
+/// @param binary    If true (default), write binary STL; otherwise write ASCII.
+/// @returns true on success.
+inline bool WriteSTL(const std::string& filename, const SurfaceMesh& mesh, bool binary = true) {
+    if (binary) {
+        std::ofstream file(filename, std::ios::binary);
+        if (!file) {
+            std::cerr << "WriteSTL: cannot open file for writing: " << filename << "\n";
+            return false;
+        }
+
+        // 80-byte header
+        char header[80] = {};
+        const std::string hdr = "Binary STL written by MoPhiEssentials";
+        std::copy_n(hdr.begin(), std::min(hdr.size(), static_cast<size_t>(79)), header);
+        file.write(header, 80);
+
+        const uint32_t ntris = static_cast<uint32_t>(mesh.faces.size());
+        file.write(reinterpret_cast<const char*>(&ntris), sizeof(uint32_t));
+
+        const uint16_t attr = 0;
+        for (size_t i = 0; i < mesh.faces.size(); ++i) {
+            const auto& f = mesh.faces[i];
+            const Real3d& v0 = mesh.vertices[(size_t)f[0]];
+            const Real3d& v1 = mesh.vertices[(size_t)f[1]];
+            const Real3d& v2 = mesh.vertices[(size_t)f[2]];
+
+            Real3d e1 = v1 - v0;
+            Real3d e2 = v2 - v0;
+            Real3d n = e1 % e2;
+            const double len = n.Length();
+            if (len > kMeshNormalLengthEps)
+                n = n * (1.0 / len);
+
+            float nf[3] = {static_cast<float>(n.x()), static_cast<float>(n.y()),
+                           static_cast<float>(n.z())};
+            file.write(reinterpret_cast<const char*>(nf), sizeof(float) * 3);
+
+            float vf[3];
+            vf[0] = static_cast<float>(v0.x());
+            vf[1] = static_cast<float>(v0.y());
+            vf[2] = static_cast<float>(v0.z());
+            file.write(reinterpret_cast<const char*>(vf), sizeof(float) * 3);
+            vf[0] = static_cast<float>(v1.x());
+            vf[1] = static_cast<float>(v1.y());
+            vf[2] = static_cast<float>(v1.z());
+            file.write(reinterpret_cast<const char*>(vf), sizeof(float) * 3);
+            vf[0] = static_cast<float>(v2.x());
+            vf[1] = static_cast<float>(v2.y());
+            vf[2] = static_cast<float>(v2.z());
+            file.write(reinterpret_cast<const char*>(vf), sizeof(float) * 3);
+
+            file.write(reinterpret_cast<const char*>(&attr), sizeof(uint16_t));
+        }
+        return static_cast<bool>(file);
+    } else {
+        // ASCII STL
+        std::ofstream file(filename);
+        if (!file) {
+            std::cerr << "WriteSTL: cannot open file for writing: " << filename << "\n";
+            return false;
+        }
+        file << std::scientific;
+        file.precision(8);
+        file << "solid mesh\n";
+        for (size_t i = 0; i < mesh.faces.size(); ++i) {
+            const auto& f = mesh.faces[i];
+            const Real3d& v0 = mesh.vertices[(size_t)f[0]];
+            const Real3d& v1 = mesh.vertices[(size_t)f[1]];
+            const Real3d& v2 = mesh.vertices[(size_t)f[2]];
+
+            Real3d e1 = v1 - v0;
+            Real3d e2 = v2 - v0;
+            Real3d n = e1 % e2;
+            const double len = n.Length();
+            if (len > kMeshNormalLengthEps)
+                n = n * (1.0 / len);
+
+            file << "facet normal " << n.x() << " " << n.y() << " " << n.z() << "\n";
+            file << "  outer loop\n";
+            file << "    vertex " << v0.x() << " " << v0.y() << " " << v0.z() << "\n";
+            file << "    vertex " << v1.x() << " " << v1.y() << " " << v1.z() << "\n";
+            file << "    vertex " << v2.x() << " " << v2.y() << " " << v2.z() << "\n";
+            file << "  endloop\n";
+            file << "endfacet\n";
+        }
+        file << "endsolid mesh\n";
+        return static_cast<bool>(file);
+    }
+}
+
+// =============================================================================
+// SurfaceMesh PLY I/O
+// =============================================================================
+
+/// Load a surface mesh from a PLY file (ASCII or binary little-endian).
+///
+/// Vertex properties x, y, z are required; nx, ny, nz are optional.
+/// Big-endian binary PLY is not supported.
+///
+/// @param filename     Path to the .ply file.
+/// @param mesh         Output mesh (cleared first).
+/// @param load_normals If true, compute per-face geometric normals from vertex
+///                     winding (overwriting any per-vertex normals stored in
+///                     the file).
+/// @returns true on success.
+inline bool LoadPLY(const std::string& filename, SurfaceMesh& mesh, bool load_normals = false) {
+    mesh.Clear();
+
+    std::ifstream file(filename, std::ios::binary);
+    if (!file) {
+        std::cerr << "LoadPLY: cannot open file: " << filename << "\n";
+        return false;
+    }
+
+    // --- Parse header ---
+    std::string line;
+    if (!std::getline(file, line) || line.rfind("ply", 0) != 0) {
+        std::cerr << "LoadPLY: missing 'ply' magic: " << filename << "\n";
+        return false;
+    }
+
+    enum class PLYFormat { ASCII, BINARY_LE, BINARY_BE };
+    PLYFormat fmt = PLYFormat::ASCII;
+    size_t num_vertices = 0, num_faces = 0;
+    std::vector<std::string> vprop_names, vprop_types;
+    bool in_vertex = false;
+    std::string face_count_type, face_index_type;
+
+    while (std::getline(file, line)) {
+        if (line == "end_header")
+            break;
+        std::istringstream ls(line);
+        std::string token;
+        ls >> token;
+        if (token == "format") {
+            std::string f;
+            ls >> f;
+            if (f.find("ascii") == 0)
+                fmt = PLYFormat::ASCII;
+            else if (f.find("binary_little_endian") == 0)
+                fmt = PLYFormat::BINARY_LE;
+            else if (f.find("binary_big_endian") == 0)
+                fmt = PLYFormat::BINARY_BE;
+        } else if (token == "element") {
+            std::string elem;
+            ls >> elem;
+            if (elem == "vertex") {
+                ls >> num_vertices;
+                in_vertex = true;
+            } else if (elem == "face") {
+                ls >> num_faces;
+                in_vertex = false;
+            } else {
+                in_vertex = false;
+            }
+        } else if (token == "property" && in_vertex) {
+            std::string type, name;
+            ls >> type >> name;
+            if (!name.empty()) {
+                vprop_names.push_back(name);
+                vprop_types.push_back(type);
+            }
+        } else if (token == "property" && !in_vertex) {
+            std::string maybe_list;
+            ls >> maybe_list;
+            if (maybe_list == "list") {
+                ls >> face_count_type >> face_index_type;
+            }
+        }
+    }
+
+    if (fmt == PLYFormat::BINARY_BE) {
+        std::cerr << "LoadPLY: big-endian binary PLY not supported: " << filename << "\n";
+        return false;
+    }
+    if (num_vertices == 0 || num_faces == 0) {
+        std::cerr << "LoadPLY: no vertices or faces: " << filename << "\n";
+        return false;
+    }
+
+    auto find_prop = [&](const std::string& name) -> int {
+        for (int i = 0; i < static_cast<int>(vprop_names.size()); ++i)
+            if (vprop_names[i] == name)
+                return i;
+        return -1;
+    };
+    const int idx_x = find_prop("x"), idx_y = find_prop("y"), idx_z = find_prop("z");
+    const int idx_nx = find_prop("nx"), idx_ny = find_prop("ny"), idx_nz = find_prop("nz");
+    const bool has_vnormals = (idx_nx >= 0 && idx_ny >= 0 && idx_nz >= 0);
+
+    // Helper: read a single scalar of the given PLY type (binary LE)
+    auto read_scalar_le = [&](const std::string& type, double& out) -> bool {
+        if (type == "float" || type == "float32") {
+            float v;
+            if (!file.read(reinterpret_cast<char*>(&v), sizeof(float)))
+                return false;
+            out = static_cast<double>(v);
+        } else if (type == "double" || type == "float64") {
+            double v;
+            if (!file.read(reinterpret_cast<char*>(&v), sizeof(double)))
+                return false;
+            out = v;
+        } else if (type == "uchar" || type == "uint8") {
+            uint8_t v;
+            if (!file.read(reinterpret_cast<char*>(&v), sizeof(uint8_t)))
+                return false;
+            out = static_cast<double>(v);
+        } else if (type == "char" || type == "int8") {
+            int8_t v;
+            if (!file.read(reinterpret_cast<char*>(&v), sizeof(int8_t)))
+                return false;
+            out = static_cast<double>(v);
+        } else if (type == "short" || type == "int16") {
+            int16_t v;
+            if (!file.read(reinterpret_cast<char*>(&v), sizeof(int16_t)))
+                return false;
+            out = static_cast<double>(v);
+        } else if (type == "ushort" || type == "uint16") {
+            uint16_t v;
+            if (!file.read(reinterpret_cast<char*>(&v), sizeof(uint16_t)))
+                return false;
+            out = static_cast<double>(v);
+        } else if (type == "int" || type == "int32") {
+            int32_t v;
+            if (!file.read(reinterpret_cast<char*>(&v), sizeof(int32_t)))
+                return false;
+            out = static_cast<double>(v);
+        } else if (type == "uint" || type == "uint32") {
+            uint32_t v;
+            if (!file.read(reinterpret_cast<char*>(&v), sizeof(uint32_t)))
+                return false;
+            out = static_cast<double>(v);
+        } else {
+            return false;
+        }
+        return true;
+    };
+
+    mesh.vertices.reserve(num_vertices);
+    mesh.faces.reserve(num_faces);
+    std::vector<Real3d> file_normals;
+
+    // --- Read vertices ---
+    for (size_t i = 0; i < num_vertices; ++i) {
+        if (fmt == PLYFormat::ASCII) {
+            if (!std::getline(file, line)) {
+                std::cerr << "LoadPLY: unexpected EOF in vertices: " << filename << "\n";
+                return false;
+            }
+            std::istringstream ls(line);
+            std::vector<double> vals;
+            double v;
+            while (ls >> v)
+                vals.push_back(v);
+
+            if (idx_x < 0 || idx_y < 0 || idx_z < 0 ||
+                vals.size() <= static_cast<size_t>(std::max({idx_x, idx_y, idx_z}))) {
+                std::cerr << "LoadPLY: missing xyz in vertex: " << filename << "\n";
+                return false;
+            }
+            mesh.vertices.push_back(
+                Real3d(vals[(size_t)idx_x], vals[(size_t)idx_y], vals[(size_t)idx_z]));
+            if (has_vnormals &&
+                vals.size() > static_cast<size_t>(std::max({idx_nx, idx_ny, idx_nz}))) {
+                file_normals.push_back(
+                    Real3d(vals[(size_t)idx_nx], vals[(size_t)idx_ny], vals[(size_t)idx_nz]));
+            }
+        } else {
+            std::vector<double> vals(vprop_names.size(), 0.0);
+            for (size_t p = 0; p < vprop_names.size(); ++p) {
+                if (!read_scalar_le(vprop_types[p], vals[p])) {
+                    std::cerr << "LoadPLY: error reading binary vertex: " << filename << "\n";
+                    return false;
+                }
+            }
+            if (idx_x < 0 || idx_y < 0 || idx_z < 0) {
+                std::cerr << "LoadPLY: missing xyz in vertex: " << filename << "\n";
+                return false;
+            }
+            mesh.vertices.push_back(
+                Real3d(vals[(size_t)idx_x], vals[(size_t)idx_y], vals[(size_t)idx_z]));
+            if (has_vnormals &&
+                vals.size() > static_cast<size_t>(std::max({idx_nx, idx_ny, idx_nz}))) {
+                file_normals.push_back(
+                    Real3d(vals[(size_t)idx_nx], vals[(size_t)idx_ny], vals[(size_t)idx_nz]));
+            }
+        }
+    }
+
+    // --- Read faces ---
+    for (size_t i = 0; i < num_faces; ++i) {
+        if (fmt == PLYFormat::ASCII) {
+            if (!std::getline(file, line)) {
+                std::cerr << "LoadPLY: unexpected EOF in faces: " << filename << "\n";
+                return false;
+            }
+            std::istringstream ls(line);
+            int verts_in_face = 0;
+            ls >> verts_in_face;
+            if (verts_in_face < 3)
+                continue;
+            std::vector<int> idx((size_t)verts_in_face);
+            for (int j = 0; j < verts_in_face; ++j)
+                ls >> idx[(size_t)j];
+            // Fan-triangulate polygon
+            for (int t = 1; t < verts_in_face - 1; ++t)
+                mesh.faces.push_back({idx[0], idx[(size_t)t], idx[(size_t)t + 1]});
+        } else {
+            const std::string& cnt_type =
+                face_count_type.empty() ? std::string("uchar") : face_count_type;
+            const std::string& idx_type =
+                face_index_type.empty() ? std::string("int") : face_index_type;
+            double count_d = 0.0;
+            if (!read_scalar_le(cnt_type, count_d)) {
+                std::cerr << "LoadPLY: error reading face count: " << filename << "\n";
+                return false;
+            }
+            const int verts_in_face = static_cast<int>(count_d);
+            std::vector<int> idx((size_t)std::max(verts_in_face, 0));
+            for (int j = 0; j < verts_in_face; ++j) {
+                double v = 0.0;
+                if (!read_scalar_le(idx_type, v)) {
+                    std::cerr << "LoadPLY: error reading face indices: " << filename << "\n";
+                    return false;
+                }
+                idx[(size_t)j] = static_cast<int>(v);
+            }
+            if (verts_in_face >= 3) {
+                for (int t = 1; t < verts_in_face - 1; ++t)
+                    mesh.faces.push_back({idx[0], idx[(size_t)t], idx[(size_t)t + 1]});
+            }
+        }
+    }
+
+    if (mesh.faces.empty()) {
+        std::cerr << "LoadPLY: no faces parsed: " << filename << "\n";
+        return false;
+    }
+
+    if (load_normals) {
+        mesh.ComputeFaceNormals();
+    } else if (!file_normals.empty() && file_normals.size() == mesh.vertices.size()) {
+        // Store per-vertex normals from the file if available
+        mesh.normals = std::move(file_normals);
+        mesh.faceNormalIndices.reserve(mesh.faces.size());
+        for (const auto& f : mesh.faces)
+            mesh.faceNormalIndices.push_back({f[0], f[1], f[2]});
+    }
+
+    return true;
+}
+
+/// Write a surface mesh to an ASCII or binary little-endian PLY file.
+///
+/// @param filename  Path to the output .ply file.
+/// @param mesh      Mesh to write.
+/// @param binary    If true, write binary little-endian PLY; otherwise ASCII.
+/// @returns true on success.
+inline bool WritePLY(const std::string& filename, const SurfaceMesh& mesh, bool binary = false) {
+    if (binary) {
+        std::ofstream file(filename, std::ios::binary);
+        if (!file) {
+            std::cerr << "WritePLY: cannot open file for writing: " << filename << "\n";
+            return false;
+        }
+
+        // Write header as text
+        std::ostringstream hdr;
+        hdr << "ply\n";
+        hdr << "format binary_little_endian 1.0\n";
+        hdr << "element vertex " << mesh.vertices.size() << "\n";
+        hdr << "property float x\n";
+        hdr << "property float y\n";
+        hdr << "property float z\n";
+        hdr << "element face " << mesh.faces.size() << "\n";
+        hdr << "property list uchar int vertex_indices\n";
+        hdr << "end_header\n";
+        const std::string hdr_str = hdr.str();
+        file.write(hdr_str.c_str(), (std::streamsize)hdr_str.size());
+
+        for (const auto& v : mesh.vertices) {
+            float x = static_cast<float>(v.x());
+            float y = static_cast<float>(v.y());
+            float z = static_cast<float>(v.z());
+            file.write(reinterpret_cast<const char*>(&x), sizeof(float));
+            file.write(reinterpret_cast<const char*>(&y), sizeof(float));
+            file.write(reinterpret_cast<const char*>(&z), sizeof(float));
+        }
+
+        const uint8_t three = 3;
+        for (const auto& f : mesh.faces) {
+            file.write(reinterpret_cast<const char*>(&three), sizeof(uint8_t));
+            const int32_t ia = f[0], ib = f[1], ic = f[2];
+            file.write(reinterpret_cast<const char*>(&ia), sizeof(int32_t));
+            file.write(reinterpret_cast<const char*>(&ib), sizeof(int32_t));
+            file.write(reinterpret_cast<const char*>(&ic), sizeof(int32_t));
+        }
+        return static_cast<bool>(file);
+    } else {
+        // ASCII PLY
+        std::ofstream file(filename);
+        if (!file) {
+            std::cerr << "WritePLY: cannot open file for writing: " << filename << "\n";
+            return false;
+        }
+
+        file << "ply\n";
+        file << "format ascii 1.0\n";
+        file << "element vertex " << mesh.vertices.size() << "\n";
+        file << "property float x\n";
+        file << "property float y\n";
+        file << "property float z\n";
+        file << "element face " << mesh.faces.size() << "\n";
+        file << "property list uchar int vertex_indices\n";
+        file << "end_header\n";
+
+        file << std::scientific;
+        file.precision(8);
+        for (const auto& v : mesh.vertices)
+            file << v.x() << " " << v.y() << " " << v.z() << "\n";
+        for (const auto& f : mesh.faces)
+            file << "3 " << f[0] << " " << f[1] << " " << f[2] << "\n";
+
+        return static_cast<bool>(file);
+    }
+}
+
+// =============================================================================
+// SurfaceMesh OBJ I/O
+// =============================================================================
+
+/// Load a surface mesh from a Wavefront OBJ file.
+///
+/// Uses the bundled WavefrontMeshLoader. Vertex, normal, and UV index pools are
+/// stored verbatim from the file (0-based after conversion from OBJ 1-based).
+///
+/// @param filename     Path to the .obj file.
+/// @param mesh         Output mesh (cleared first).
+/// @param load_normals If true, load per-vertex normals and face normal indices.
+/// @param load_uv      If true, load UV texture coordinates and face UV indices.
+/// @returns true on success.
+inline bool LoadOBJ(const std::string& filename, SurfaceMesh& mesh,
+                    bool load_normals = true, bool load_uv = false) {
+    mesh.Clear();
+
+    using namespace WAVEFRONT;
+    GeometryInterface dummy;
+    OBJ obj;
+    if (obj.LoadMesh(filename.c_str(), &dummy, /*textured=*/true) == -1) {
+        std::cerr << "LoadOBJ: failed to load: " << filename << "\n";
+        return false;
+    }
+
+    // Vertices
+    for (size_t i = 0; i + 2 < obj.mVerts.size(); i += 3)
+        mesh.vertices.push_back(Real3d(obj.mVerts[i], obj.mVerts[i + 1], obj.mVerts[i + 2]));
+
+    // Normals
+    if (load_normals && !obj.mNormals.empty()) {
+        for (size_t i = 0; i + 2 < obj.mNormals.size(); i += 3)
+            mesh.normals.push_back(
+                Real3d(obj.mNormals[i], obj.mNormals[i + 1], obj.mNormals[i + 2]));
+    }
+
+    // UVs
+    if (load_uv && !obj.mTexels.empty()) {
+        for (size_t i = 0; i + 1 < obj.mTexels.size(); i += 2)
+            mesh.uvs.push_back(Real3d(obj.mTexels[i], obj.mTexels[i + 1], 0.0));
+    }
+
+    // Face vertex indices
+    for (size_t i = 0; i + 2 < obj.mIndexesVerts.size(); i += 3)
+        mesh.faces.push_back(
+            {obj.mIndexesVerts[i], obj.mIndexesVerts[i + 1], obj.mIndexesVerts[i + 2]});
+
+    // Face normal indices (only if sizes are consistent)
+    if (load_normals && obj.mIndexesNormals.size() == obj.mIndexesVerts.size()) {
+        for (size_t i = 0; i + 2 < obj.mIndexesNormals.size(); i += 3)
+            mesh.faceNormalIndices.push_back({obj.mIndexesNormals[i], obj.mIndexesNormals[i + 1],
+                                              obj.mIndexesNormals[i + 2]});
+    }
+
+    // Face UV indices (only if sizes are consistent)
+    if (load_uv && obj.mIndexesTexels.size() == obj.mIndexesVerts.size()) {
+        for (size_t i = 0; i + 2 < obj.mIndexesTexels.size(); i += 3)
+            mesh.faceUVIndices.push_back({obj.mIndexesTexels[i], obj.mIndexesTexels[i + 1],
+                                          obj.mIndexesTexels[i + 2]});
+    }
+
+    if (mesh.faces.empty()) {
+        std::cerr << "LoadOBJ: no faces loaded from: " << filename << "\n";
+        return false;
+    }
+    return true;
+}
+
+/// Write one or more surface meshes to a Wavefront OBJ file.
+///
+/// All meshes are written into a single OBJ file with global vertex/normal
+/// offset bookkeeping.  If a mesh has normals, faces are written in v//vn
+/// format; otherwise plain v format is used.
+///
+/// @param filename  Path to the output .obj file.
+/// @param meshes    Meshes to write.
+inline void WriteOBJ(const std::string& filename, const std::vector<SurfaceMesh>& meshes) {
+    std::ofstream file(filename);
+    if (!file) {
+        std::cerr << "WriteOBJ: cannot open file for writing: " << filename << "\n";
+        return;
+    }
+    file << std::scientific;
+    file.precision(10);
+
+    int v_off = 1, vn_off = 1;
+    for (size_t mi = 0; mi < meshes.size(); ++mi) {
+        const auto& m = meshes[mi];
+        file << "# mesh " << mi << "\n";
+
+        for (const auto& v : m.vertices)
+            file << "v " << v.x() << " " << v.y() << " " << v.z() << "\n";
+
+        for (const auto& n : m.normals)
+            file << "vn " << n.x() << " " << n.y() << " " << n.z() << "\n";
+
+        if (m.HasNormals()) {
+            assert(m.faces.size() == m.faceNormalIndices.size());
+            for (size_t fi = 0; fi < m.faces.size(); ++fi) {
+                const auto& fv = m.faces[fi];
+                const auto& fn = m.faceNormalIndices[fi];
+                file << "f " << (fv[0] + v_off) << "//" << (fn[0] + vn_off) << " "
+                     << (fv[1] + v_off) << "//" << (fn[1] + vn_off) << " "
+                     << (fv[2] + v_off) << "//" << (fn[2] + vn_off) << "\n";
+            }
+        } else {
+            for (const auto& fv : m.faces)
+                file << "f " << (fv[0] + v_off) << " " << (fv[1] + v_off) << " "
+                     << (fv[2] + v_off) << "\n";
+        }
+
+        v_off += static_cast<int>(m.vertices.size());
+        vn_off += static_cast<int>(m.normals.size());
+    }
+}
+
+/// Write a single surface mesh to a Wavefront OBJ file.
+inline void WriteOBJ(const std::string& filename, const SurfaceMesh& mesh) {
+    WriteOBJ(filename, std::vector<SurfaceMesh>{mesh});
 }
 
 }  // namespace mophi

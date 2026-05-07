@@ -20,6 +20,7 @@ SET(CPU_DEMOS
     TestMesh.cpp
     TestQuaternion.cpp
     TestContainersCpu.cpp
+    TestSurfaceMeshIO.cpp
 )
 
 SET(GPU_DEMOS
