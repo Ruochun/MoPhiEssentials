@@ -156,8 +156,7 @@ int main() {
         mophi::SurfaceMesh tet = make_unit_tet();
         size_t be = 0, nme = 0;
         bool wt = tet.IsWatertight(&be, &nme);
-        std::cout << "  Tet: watertight=" << wt << "  boundary=" << be
-                  << "  non-manifold=" << nme << std::endl;
+        std::cout << "  Tet: watertight=" << wt << "  boundary=" << be << "  non-manifold=" << nme << std::endl;
         assert(wt && "Unit tet should be watertight");
         assert(be == 0 && nme == 0);
         std::cout << "  ✓ Closed tetrahedron is watertight" << std::endl;
@@ -165,8 +164,7 @@ int main() {
         mophi::SurfaceMesh cube = make_unit_cube();
         be = nme = 0;
         wt = cube.IsWatertight(&be, &nme);
-        std::cout << "  Cube: watertight=" << wt << "  boundary=" << be
-                  << "  non-manifold=" << nme << std::endl;
+        std::cout << "  Cube: watertight=" << wt << "  boundary=" << be << "  non-manifold=" << nme << std::endl;
         assert(wt && "Unit cube should be watertight");
         std::cout << "  ✓ Closed cube is watertight" << std::endl;
 
@@ -193,12 +191,11 @@ int main() {
         std::cout << "  Volume     = " << volume << "  (expected " << 1.0 / 6.0 << ")\n";
         std::cout << "  CoM        = (" << center.x() << ", " << center.y() << ", " << center.z()
                   << ")  (expected (0.25, 0.25, 0.25))\n";
-        std::cout << "  Inertia    = (" << inertia.x() << ", " << inertia.y() << ", "
-                  << inertia.z() << ")  (expected ~0.0125 each)\n";
+        std::cout << "  Inertia    = (" << inertia.x() << ", " << inertia.y() << ", " << inertia.z()
+                  << ")  (expected ~0.0125 each)\n";
 
         assert(near(volume, 1.0 / 6.0, 1e-10) && "Volume mismatch for unit tet");
-        assert(near3(center, mophi::Real3d(0.25, 0.25, 0.25), 1e-10) &&
-               "CoM mismatch for unit tet");
+        assert(near3(center, mophi::Real3d(0.25, 0.25, 0.25), 1e-10) && "CoM mismatch for unit tet");
         // Ixx_CoM = 1/80 = 0.0125
         assert(near(inertia.x(), 1.0 / 80.0, 1e-10) && "Ixx mismatch for unit tet");
         assert(near(inertia.y(), 1.0 / 80.0, 1e-10) && "Iyy mismatch for unit tet");
@@ -260,8 +257,7 @@ int main() {
 
         assert(reloaded.NumFaces() == orig.NumFaces() && "STL face count mismatch");
         // STL duplicates vertices per triangle: each face = 3 unique vertices
-        assert(reloaded.NumVertices() == orig.NumFaces() * 3 &&
-               "STL vertex count mismatch");
+        assert(reloaded.NumVertices() == orig.NumFaces() * 3 && "STL vertex count mismatch");
         assert(reloaded.HasNormals() && "STL reload should have normals (load_normals=true)");
 
         // Verify vertex positions match (each face's 3 consecutive vertices)
@@ -319,8 +315,7 @@ int main() {
         assert(load_ok);
         size_t be = 0, nme = 0;
         bool wt = stl_mesh.IsWatertight(&be, &nme);
-        std::cout << "  STL-reloaded tet: watertight=" << wt << "  boundary=" << be
-                  << "  non-manifold=" << nme << "\n";
+        std::cout << "  STL-reloaded tet: watertight=" << wt << "  boundary=" << be << "  non-manifold=" << nme << "\n";
         assert(wt && "STL-reloaded tet should be watertight after vertex welding");
         std::cout << "  ✓ IsWatertight correctly welds duplicate STL vertices\n";
     }
@@ -343,8 +338,7 @@ int main() {
 
         const double tol = 1e-6;
         for (size_t i = 0; i < orig.NumVertices(); ++i)
-            assert(near3(reloaded.vertices[i], orig.vertices[i], tol) &&
-                   "PLY vertex position mismatch");
+            assert(near3(reloaded.vertices[i], orig.vertices[i], tol) && "PLY vertex position mismatch");
         for (size_t i = 0; i < orig.NumFaces(); ++i)
             for (int k = 0; k < 3; ++k)
                 assert(reloaded.faces[i][k] == orig.faces[i][k] && "PLY face index mismatch");
@@ -368,8 +362,7 @@ int main() {
         assert(reloaded.NumFaces() == orig.NumFaces() && "Binary PLY face count mismatch");
         const double tol = 1e-5;  // float precision
         for (size_t i = 0; i < orig.NumVertices(); ++i)
-            assert(near3(reloaded.vertices[i], orig.vertices[i], tol) &&
-                   "Binary PLY vertex position mismatch");
+            assert(near3(reloaded.vertices[i], orig.vertices[i], tol) && "Binary PLY vertex position mismatch");
         std::cout << "  ✓ PLY binary write/read round-trip OK\n";
     }
 
@@ -389,8 +382,7 @@ int main() {
         assert(reloaded.HasNormals() && "Should have normals after load_normals=true");
         assert(reloaded.normals.size() == reloaded.NumFaces());
         // Bottom face normal should be ~(0,0,-1)
-        assert(near3(reloaded.normals[0], mophi::Real3d(0, 0, -1)) &&
-               "PLY normal[0] mismatch");
+        assert(near3(reloaded.normals[0], mophi::Real3d(0, 0, -1)) && "PLY normal[0] mismatch");
         std::cout << "  ✓ PLY load_normals=true computes correct face normals\n";
     }
 
@@ -414,8 +406,7 @@ int main() {
 
         const double tol = 1e-6;
         for (size_t i = 0; i < orig.NumVertices(); ++i)
-            assert(near3(reloaded.vertices[i], orig.vertices[i], tol) &&
-                   "OBJ vertex position mismatch");
+            assert(near3(reloaded.vertices[i], orig.vertices[i], tol) && "OBJ vertex position mismatch");
         for (size_t i = 0; i < orig.NumFaces(); ++i)
             for (int k = 0; k < 3; ++k)
                 assert(reloaded.faces[i][k] == orig.faces[i][k] && "OBJ face index mismatch");
@@ -450,8 +441,8 @@ int main() {
                 assert(combined.faces[fi][k] >= (int)tet.NumVertices() &&
                        combined.faces[fi][k] < (int)(tet.NumVertices() + cube.NumVertices()));
         }
-        std::cout << "  ✓ OBJ multi-mesh write/read OK ("
-                  << combined.NumVertices() << " verts, " << combined.NumFaces() << " faces)\n";
+        std::cout << "  ✓ OBJ multi-mesh write/read OK (" << combined.NumVertices() << " verts, " << combined.NumFaces()
+                  << " faces)\n";
     }
 
     // -----------------------------------------------------------------------

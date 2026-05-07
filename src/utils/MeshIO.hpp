@@ -580,8 +580,7 @@ inline bool LoadSTL(const std::string& filename, SurfaceMesh& mesh, bool load_no
         return false;
     }
 
-    std::vector<char> buffer((std::istreambuf_iterator<char>(file)),
-                             std::istreambuf_iterator<char>());
+    std::vector<char> buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     if (buffer.size() < 84) {
         std::cerr << "LoadSTL: file too small: " << filename << "\n";
         return false;
@@ -689,8 +688,7 @@ inline bool WriteSTL(const std::string& filename, const SurfaceMesh& mesh, bool 
             if (len > kMeshNormalLengthEps)
                 n = n * (1.0 / len);
 
-            float nf[3] = {static_cast<float>(n.x()), static_cast<float>(n.y()),
-                           static_cast<float>(n.z())};
+            float nf[3] = {static_cast<float>(n.x()), static_cast<float>(n.y()), static_cast<float>(n.z())};
             file.write(reinterpret_cast<const char*>(nf), sizeof(float) * 3);
 
             float vf[3];
@@ -916,12 +914,9 @@ inline bool LoadPLY(const std::string& filename, SurfaceMesh& mesh, bool load_no
                 std::cerr << "LoadPLY: missing xyz in vertex: " << filename << "\n";
                 return false;
             }
-            mesh.vertices.push_back(
-                Real3d(vals[(size_t)idx_x], vals[(size_t)idx_y], vals[(size_t)idx_z]));
-            if (has_vnormals &&
-                vals.size() > static_cast<size_t>(std::max({idx_nx, idx_ny, idx_nz}))) {
-                file_normals.push_back(
-                    Real3d(vals[(size_t)idx_nx], vals[(size_t)idx_ny], vals[(size_t)idx_nz]));
+            mesh.vertices.push_back(Real3d(vals[(size_t)idx_x], vals[(size_t)idx_y], vals[(size_t)idx_z]));
+            if (has_vnormals && vals.size() > static_cast<size_t>(std::max({idx_nx, idx_ny, idx_nz}))) {
+                file_normals.push_back(Real3d(vals[(size_t)idx_nx], vals[(size_t)idx_ny], vals[(size_t)idx_nz]));
             }
         } else {
             std::vector<double> vals(vprop_names.size(), 0.0);
@@ -935,12 +930,9 @@ inline bool LoadPLY(const std::string& filename, SurfaceMesh& mesh, bool load_no
                 std::cerr << "LoadPLY: missing xyz in vertex: " << filename << "\n";
                 return false;
             }
-            mesh.vertices.push_back(
-                Real3d(vals[(size_t)idx_x], vals[(size_t)idx_y], vals[(size_t)idx_z]));
-            if (has_vnormals &&
-                vals.size() > static_cast<size_t>(std::max({idx_nx, idx_ny, idx_nz}))) {
-                file_normals.push_back(
-                    Real3d(vals[(size_t)idx_nx], vals[(size_t)idx_ny], vals[(size_t)idx_nz]));
+            mesh.vertices.push_back(Real3d(vals[(size_t)idx_x], vals[(size_t)idx_y], vals[(size_t)idx_z]));
+            if (has_vnormals && vals.size() > static_cast<size_t>(std::max({idx_nx, idx_ny, idx_nz}))) {
+                file_normals.push_back(Real3d(vals[(size_t)idx_nx], vals[(size_t)idx_ny], vals[(size_t)idx_nz]));
             }
         }
     }
@@ -964,10 +956,8 @@ inline bool LoadPLY(const std::string& filename, SurfaceMesh& mesh, bool load_no
             for (int t = 1; t < verts_in_face - 1; ++t)
                 mesh.faces.push_back({idx[0], idx[(size_t)t], idx[(size_t)t + 1]});
         } else {
-            const std::string& cnt_type =
-                face_count_type.empty() ? std::string("uchar") : face_count_type;
-            const std::string& idx_type =
-                face_index_type.empty() ? std::string("int") : face_index_type;
+            const std::string& cnt_type = face_count_type.empty() ? std::string("uchar") : face_count_type;
+            const std::string& idx_type = face_index_type.empty() ? std::string("int") : face_index_type;
             double count_d = 0.0;
             if (!read_scalar_le(cnt_type, count_d)) {
                 std::cerr << "LoadPLY: error reading face count: " << filename << "\n";
@@ -1097,8 +1087,7 @@ inline bool WritePLY(const std::string& filename, const SurfaceMesh& mesh, bool 
 /// @param load_normals If true, load per-vertex normals and face normal indices.
 /// @param load_uv      If true, load UV texture coordinates and face UV indices.
 /// @returns true on success.
-inline bool LoadOBJ(const std::string& filename, SurfaceMesh& mesh,
-                    bool load_normals = true, bool load_uv = false) {
+inline bool LoadOBJ(const std::string& filename, SurfaceMesh& mesh, bool load_normals = true, bool load_uv = false) {
     mesh.Clear();
 
     using namespace WAVEFRONT;
@@ -1116,8 +1105,7 @@ inline bool LoadOBJ(const std::string& filename, SurfaceMesh& mesh,
     // Normals
     if (load_normals && !obj.mNormals.empty()) {
         for (size_t i = 0; i + 2 < obj.mNormals.size(); i += 3)
-            mesh.normals.push_back(
-                Real3d(obj.mNormals[i], obj.mNormals[i + 1], obj.mNormals[i + 2]));
+            mesh.normals.push_back(Real3d(obj.mNormals[i], obj.mNormals[i + 1], obj.mNormals[i + 2]));
     }
 
     // UVs
@@ -1128,21 +1116,19 @@ inline bool LoadOBJ(const std::string& filename, SurfaceMesh& mesh,
 
     // Face vertex indices
     for (size_t i = 0; i + 2 < obj.mIndexesVerts.size(); i += 3)
-        mesh.faces.push_back(
-            {obj.mIndexesVerts[i], obj.mIndexesVerts[i + 1], obj.mIndexesVerts[i + 2]});
+        mesh.faces.push_back({obj.mIndexesVerts[i], obj.mIndexesVerts[i + 1], obj.mIndexesVerts[i + 2]});
 
     // Face normal indices (only if sizes are consistent)
     if (load_normals && obj.mIndexesNormals.size() == obj.mIndexesVerts.size()) {
         for (size_t i = 0; i + 2 < obj.mIndexesNormals.size(); i += 3)
-            mesh.faceNormalIndices.push_back({obj.mIndexesNormals[i], obj.mIndexesNormals[i + 1],
-                                              obj.mIndexesNormals[i + 2]});
+            mesh.faceNormalIndices.push_back(
+                {obj.mIndexesNormals[i], obj.mIndexesNormals[i + 1], obj.mIndexesNormals[i + 2]});
     }
 
     // Face UV indices (only if sizes are consistent)
     if (load_uv && obj.mIndexesTexels.size() == obj.mIndexesVerts.size()) {
         for (size_t i = 0; i + 2 < obj.mIndexesTexels.size(); i += 3)
-            mesh.faceUVIndices.push_back({obj.mIndexesTexels[i], obj.mIndexesTexels[i + 1],
-                                          obj.mIndexesTexels[i + 2]});
+            mesh.faceUVIndices.push_back({obj.mIndexesTexels[i], obj.mIndexesTexels[i + 1], obj.mIndexesTexels[i + 2]});
     }
 
     if (mesh.faces.empty()) {
@@ -1185,14 +1171,12 @@ inline void WriteOBJ(const std::string& filename, const std::vector<SurfaceMesh>
             for (size_t fi = 0; fi < m.faces.size(); ++fi) {
                 const auto& fv = m.faces[fi];
                 const auto& fn = m.faceNormalIndices[fi];
-                file << "f " << (fv[0] + v_off) << "//" << (fn[0] + vn_off) << " "
-                     << (fv[1] + v_off) << "//" << (fn[1] + vn_off) << " "
-                     << (fv[2] + v_off) << "//" << (fn[2] + vn_off) << "\n";
+                file << "f " << (fv[0] + v_off) << "//" << (fn[0] + vn_off) << " " << (fv[1] + v_off) << "//"
+                     << (fn[1] + vn_off) << " " << (fv[2] + v_off) << "//" << (fn[2] + vn_off) << "\n";
             }
         } else {
             for (const auto& fv : m.faces)
-                file << "f " << (fv[0] + v_off) << " " << (fv[1] + v_off) << " "
-                     << (fv[2] + v_off) << "\n";
+                file << "f " << (fv[0] + v_off) << " " << (fv[1] + v_off) << " " << (fv[2] + v_off) << "\n";
         }
 
         v_off += static_cast<int>(m.vertices.size());

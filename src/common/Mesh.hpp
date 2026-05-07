@@ -462,7 +462,6 @@ inline MeshSoup BuildMeshSoup(const Mesh& mesh, const SoupOptions& opt) {
     return S;
 }
 
-
 // =============================================================================
 // SurfaceMesh: triangle surface mesh data structure
 // =============================================================================
@@ -481,10 +480,10 @@ constexpr double kMeshVertexWeldFactor = 1e-6;
 /// Describes one adjacency entry for a triangle: its neighbor and the shared
 /// oriented-edge info.  Built by SurfaceMesh::BuildAdjacencyWithEdgeInfo().
 struct EdgeAdjInfo {
-    size_t nbr;       ///< Index of the neighboring triangle
-    int va;           ///< Directed edge start vertex (as in the current triangle)
-    int vb;           ///< Directed edge end vertex (as in the current triangle)
-    bool oriented_ok; ///< true if the neighbor winding is consistent (edge reversed)
+    size_t nbr;        ///< Index of the neighboring triangle
+    int va;            ///< Directed edge start vertex (as in the current triangle)
+    int vb;            ///< Directed edge end vertex (as in the current triangle)
+    bool oriented_ok;  ///< true if the neighbor winding is consistent (edge reversed)
 };
 
 /// A surface triangle mesh: vertices, triangular faces, optional per-face/-vertex
@@ -611,8 +610,7 @@ struct SurfaceMesh {
     /// @param boundary_edges_out     Receives the number of boundary edges found.
     /// @param nonmanifold_edges_out  Receives the number of non-manifold edges found.
     /// @returns true if the mesh is watertight.
-    bool IsWatertight(size_t* boundary_edges_out = nullptr,
-                      size_t* nonmanifold_edges_out = nullptr) const {
+    bool IsWatertight(size_t* boundary_edges_out = nullptr, size_t* nonmanifold_edges_out = nullptr) const {
         if (faces.empty()) {
             if (boundary_edges_out)
                 *boundary_edges_out = 0;
@@ -622,8 +620,7 @@ struct SurfaceMesh {
         }
 
         // Helper: count boundary/non-manifold from a canonical index array.
-        auto count_edges = [&](const std::vector<size_t>& canon,
-                               size_t& boundary, size_t& nonmanifold) {
+        auto count_edges = [&](const std::vector<size_t>& canon, size_t& boundary, size_t& nonmanifold) {
             std::map<std::pair<size_t, size_t>, size_t> edge_counts;
             for (const auto& f : faces) {
                 int a0 = f[0], b0 = f[1], c0 = f[2];
@@ -665,12 +662,18 @@ struct SurfaceMesh {
             double bb_min[3] = {vertices[0].x(), vertices[0].y(), vertices[0].z()};
             double bb_max[3] = {vertices[0].x(), vertices[0].y(), vertices[0].z()};
             for (const auto& v : vertices) {
-                if (v.x() < bb_min[0]) bb_min[0] = v.x();
-                if (v.y() < bb_min[1]) bb_min[1] = v.y();
-                if (v.z() < bb_min[2]) bb_min[2] = v.z();
-                if (v.x() > bb_max[0]) bb_max[0] = v.x();
-                if (v.y() > bb_max[1]) bb_max[1] = v.y();
-                if (v.z() > bb_max[2]) bb_max[2] = v.z();
+                if (v.x() < bb_min[0])
+                    bb_min[0] = v.x();
+                if (v.y() < bb_min[1])
+                    bb_min[1] = v.y();
+                if (v.z() < bb_min[2])
+                    bb_min[2] = v.z();
+                if (v.x() > bb_max[0])
+                    bb_max[0] = v.x();
+                if (v.y() > bb_max[1])
+                    bb_max[1] = v.y();
+                if (v.z() > bb_max[2])
+                    bb_max[2] = v.z();
             }
             double diag2 = 0;
             for (int k = 0; k < 3; ++k)
@@ -727,8 +730,7 @@ struct SurfaceMesh {
     /// Compute volume, center of mass, diagonal inertia (Ixx, Iyy, Izz), and
     /// off-diagonal inertia products (Ixy, Iyz, Izx) in the center-of-mass frame
     /// assuming unit density and a solid (watertight) mesh.
-    void ComputeMassProperties(double& volume, Real3d& center, Real3d& inertia,
-                               Real3d& inertia_products) const {
+    void ComputeMassProperties(double& volume, Real3d& center, Real3d& inertia, Real3d& inertia_products) const {
         double vol = 0.0;
         double mx = 0.0, my = 0.0, mz = 0.0;
         double ix2 = 0.0, iy2 = 0.0, iz2 = 0.0;
@@ -760,12 +762,12 @@ struct SurfaceMesh {
             iy2 += v * f1y / 10.0;
             iz2 += v * f1z / 10.0;
 
-            const double fxy = 2.0 * (ax * ay + bx * by + cx * cy) +
-                               (ax * by + ay * bx + bx * cy + by * cx + cx * ay + cy * ax);
-            const double fyz = 2.0 * (ay * az + by * bz + cy * cz) +
-                               (ay * bz + az * by + by * cz + bz * cy + cy * az + cz * ay);
-            const double fzx = 2.0 * (az * ax + bz * bx + cz * cx) +
-                               (az * bx + ax * bz + bz * cx + bx * cz + cz * ax + cx * az);
+            const double fxy =
+                2.0 * (ax * ay + bx * by + cx * cy) + (ax * by + ay * bx + bx * cy + by * cx + cx * ay + cy * ax);
+            const double fyz =
+                2.0 * (ay * az + by * bz + cy * cz) + (ay * bz + az * by + by * cz + bz * cy + cy * az + cz * ay);
+            const double fzx =
+                2.0 * (az * ax + bz * bx + cz * cx) + (az * bx + ax * bz + bz * cx + bx * cz + cz * ax + cx * az);
 
             ixy += v * fxy / 20.0;
             iyz += v * fyz / 20.0;
