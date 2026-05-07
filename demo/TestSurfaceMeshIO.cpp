@@ -466,9 +466,11 @@ int main() {
 
         // Write STL, reload, check mass props (vertex welding makes it solid)
         const std::string stl_f = output_dir + "/test_mass_stl.stl";
-        WriteSTL(stl_f, tet_orig);
+        bool stl_write_ok = WriteSTL(stl_f, tet_orig);
+        assert(stl_write_ok);
         mophi::SurfaceMesh m_stl;
-        LoadSTL(stl_f, m_stl);
+        bool stl_load_ok = LoadSTL(stl_f, m_stl);
+        assert(stl_load_ok);
         double vol_stl;
         mophi::Real3d ctr_stl, iner_stl, prod_stl;
         m_stl.ComputeMassProperties(vol_stl, ctr_stl, iner_stl, prod_stl);
@@ -478,9 +480,11 @@ int main() {
 
         // Write PLY, reload, check mass props
         const std::string ply_f = output_dir + "/test_mass_ply.ply";
-        WritePLY(ply_f, tet_orig);
+        bool ply_write_ok = WritePLY(ply_f, tet_orig);
+        assert(ply_write_ok);
         mophi::SurfaceMesh m_ply;
-        LoadPLY(ply_f, m_ply);
+        bool ply_load_ok = LoadPLY(ply_f, m_ply);
+        assert(ply_load_ok);
         double vol_ply;
         mophi::Real3d ctr_ply, iner_ply, prod_ply;
         m_ply.ComputeMassProperties(vol_ply, ctr_ply, iner_ply, prod_ply);
