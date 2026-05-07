@@ -467,6 +467,17 @@ inline MeshSoup BuildMeshSoup(const Mesh& mesh, const SoupOptions& opt) {
 // SurfaceMesh: triangle surface mesh data structure
 // =============================================================================
 
+/// Minimum cross-product length below which a computed face normal is left as
+/// a zero vector (degenerate-triangle guard).
+constexpr double kMeshNormalLengthEps = 1e-15;
+
+/// Fraction of the bounding-box diagonal used as the vertex-welding tolerance
+/// in SurfaceMesh::IsWatertight().  Vertices within this fraction of the
+/// diagonal are treated as geometrically identical regardless of their raw
+/// integer indices — this handles the duplicate vertices produced by STL file
+/// loading.
+constexpr double kMeshVertexWeldFactor = 1e-6;
+
 /// Describes one adjacency entry for a triangle: its neighbor and the shared
 /// oriented-edge info.  Built by SurfaceMesh::BuildAdjacencyWithEdgeInfo().
 struct EdgeAdjInfo {
@@ -584,7 +595,7 @@ struct SurfaceMesh {
             Real3d e2 = vertices[f[2]] - vertices[f[0]];
             Real3d nm = e1 % e2;
             double len = nm.Length();
-            if (len > 1e-15)
+            if (len > kMeshNormalLengthEps)
                 nm = nm * (1.0 / len);
             normals.push_back(nm);
             faceNormalIndices.push_back({(int)i, (int)i, (int)i});
@@ -664,7 +675,7 @@ struct SurfaceMesh {
             double diag2 = 0;
             for (int k = 0; k < 3; ++k)
                 diag2 += (bb_max[k] - bb_min[k]) * (bb_max[k] - bb_min[k]);
-            double eps = std::sqrt(diag2) * 1e-6;
+            double eps = std::sqrt(diag2) * kMeshVertexWeldFactor;
             if (eps <= 0.0)
                 eps = 1e-10;
 

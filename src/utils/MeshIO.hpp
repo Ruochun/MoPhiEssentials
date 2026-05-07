@@ -686,7 +686,7 @@ inline bool WriteSTL(const std::string& filename, const SurfaceMesh& mesh, bool 
             Real3d e2 = v2 - v0;
             Real3d n = e1 % e2;
             const double len = n.Length();
-            if (len > 1e-15)
+            if (len > kMeshNormalLengthEps)
                 n = n * (1.0 / len);
 
             float nf[3] = {static_cast<float>(n.x()), static_cast<float>(n.y()),
@@ -730,7 +730,7 @@ inline bool WriteSTL(const std::string& filename, const SurfaceMesh& mesh, bool 
             Real3d e2 = v2 - v0;
             Real3d n = e1 % e2;
             const double len = n.Length();
-            if (len > 1e-15)
+            if (len > kMeshNormalLengthEps)
                 n = n * (1.0 / len);
 
             file << "facet normal " << n.x() << " " << n.y() << " " << n.z() << "\n";
