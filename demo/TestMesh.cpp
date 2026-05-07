@@ -5,6 +5,7 @@
 #include <cassert>
 #include <vector>
 #include <cmath>
+#include <filesystem>
 #include "utils/MeshIO.hpp"
 #include "common/Mesh.hpp"
 #include "core/Quaternion.hpp"
@@ -17,7 +18,9 @@ int main() {
     std::vector<std::string> meshFiles = {"../data/beam_tet10.vtu", "../data/beam.vtu"};
 
     std::string loadedMeshPath;
-    std::string outputMeshPath = "mesh_output.vtu";  // Use relative path in current directory
+    const std::string outputDir = "./test_output/mesh";
+    std::filesystem::create_directories(outputDir);
+    std::string outputMeshPath = outputDir + "/mesh_output.vtu";
     mophi::Mesh mesh;
 
     // -----------------------------------------------------------------------

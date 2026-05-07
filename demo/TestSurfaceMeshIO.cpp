@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -92,6 +93,8 @@ static bool near3(const mophi::Real3d& a, const mophi::Real3d& b, double tol = 1
 
 int main() {
     std::cout << "=== TestSurfaceMeshIO ===" << std::endl;
+    const std::string output_dir = "./test_output/surface_mesh";
+    std::filesystem::create_directories(output_dir);
 
     // -----------------------------------------------------------------------
     // 1. Basic SurfaceMesh construction + ComputeFaceNormals
@@ -246,7 +249,7 @@ int main() {
     // -----------------------------------------------------------------------
     std::cout << "\n[6] STL binary round-trip" << std::endl;
     {
-        const std::string stl_file = "/tmp/test_surface_mesh.stl";
+        const std::string stl_file = output_dir + "/test_surface_mesh.stl";
         mophi::SurfaceMesh orig = make_unit_tet();
         assert(WriteSTL(stl_file, orig, /*binary=*/true));
 
@@ -278,7 +281,7 @@ int main() {
     // -----------------------------------------------------------------------
     std::cout << "\n[7] STL ASCII round-trip" << std::endl;
     {
-        const std::string stl_file = "/tmp/test_surface_mesh_ascii.stl";
+        const std::string stl_file = output_dir + "/test_surface_mesh_ascii.stl";
         mophi::SurfaceMesh orig = make_unit_tet();
         assert(WriteSTL(stl_file, orig, /*binary=*/false));
 
@@ -302,7 +305,7 @@ int main() {
     // -----------------------------------------------------------------------
     std::cout << "\n[8] IsWatertight on STL-reloaded mesh (quantised vertex welding)" << std::endl;
     {
-        const std::string stl_file = "/tmp/test_surface_mesh_wt.stl";
+        const std::string stl_file = output_dir + "/test_surface_mesh_wt.stl";
         mophi::SurfaceMesh orig = make_unit_tet();
         assert(WriteSTL(stl_file, orig, /*binary=*/true));
 
@@ -321,7 +324,7 @@ int main() {
     // -----------------------------------------------------------------------
     std::cout << "\n[9] PLY ASCII round-trip" << std::endl;
     {
-        const std::string ply_file = "/tmp/test_surface_mesh.ply";
+        const std::string ply_file = output_dir + "/test_surface_mesh.ply";
         mophi::SurfaceMesh orig = make_unit_cube();
         assert(WritePLY(ply_file, orig, /*binary=*/false));
 
@@ -345,7 +348,7 @@ int main() {
     // -----------------------------------------------------------------------
     std::cout << "\n[10] PLY binary round-trip" << std::endl;
     {
-        const std::string ply_file = "/tmp/test_surface_mesh_bin.ply";
+        const std::string ply_file = output_dir + "/test_surface_mesh_bin.ply";
         mophi::SurfaceMesh orig = make_unit_tet();
         assert(WritePLY(ply_file, orig, /*binary=*/true));
 
@@ -365,7 +368,7 @@ int main() {
     // -----------------------------------------------------------------------
     std::cout << "\n[11] PLY load_normals=true (computes per-face normals)" << std::endl;
     {
-        const std::string ply_file = "/tmp/test_surface_mesh_normals.ply";
+        const std::string ply_file = output_dir + "/test_surface_mesh_normals.ply";
         mophi::SurfaceMesh orig = make_unit_tet();
         assert(WritePLY(ply_file, orig, /*binary=*/false));
 
@@ -384,7 +387,7 @@ int main() {
     // -----------------------------------------------------------------------
     std::cout << "\n[12] OBJ round-trip" << std::endl;
     {
-        const std::string obj_file = "/tmp/test_surface_mesh.obj";
+        const std::string obj_file = output_dir + "/test_surface_mesh.obj";
         mophi::SurfaceMesh orig = make_unit_cube();
         orig.ComputeFaceNormals();  // add normals so they are written too
         WriteOBJ(obj_file, orig);
@@ -411,7 +414,7 @@ int main() {
     // -----------------------------------------------------------------------
     std::cout << "\n[13] OBJ multi-mesh write" << std::endl;
     {
-        const std::string obj_file = "/tmp/test_multi_mesh.obj";
+        const std::string obj_file = output_dir + "/test_multi_mesh.obj";
         mophi::SurfaceMesh tet = make_unit_tet();
         mophi::SurfaceMesh cube = make_unit_cube();
         WriteOBJ(obj_file, std::vector<mophi::SurfaceMesh>{tet, cube});
@@ -437,7 +440,7 @@ int main() {
         tet_orig.ComputeMassProperties(vol_ref, ctr_ref, iner_ref, prod_ref);
 
         // Write STL, reload, check mass props (vertex welding makes it solid)
-        const std::string stl_f = "/tmp/test_mass_stl.stl";
+        const std::string stl_f = output_dir + "/test_mass_stl.stl";
         WriteSTL(stl_f, tet_orig);
         mophi::SurfaceMesh m_stl;
         LoadSTL(stl_f, m_stl);
@@ -449,7 +452,7 @@ int main() {
         assert(near3(ctr_stl, ctr_ref, 1e-5) && "STL mass property CoM mismatch");
 
         // Write PLY, reload, check mass props
-        const std::string ply_f = "/tmp/test_mass_ply.ply";
+        const std::string ply_f = output_dir + "/test_mass_ply.ply";
         WritePLY(ply_f, tet_orig);
         mophi::SurfaceMesh m_ply;
         LoadPLY(ply_f, m_ply);
